@@ -31,7 +31,6 @@
             margin: 0;
         }
 
-        /* Navbar Styles */
         .navbar {
             display: flex;
             align-items: center;
@@ -342,13 +341,13 @@
             const menuToggle = document.getElementById('menuToggle');
             const navLinks = document.getElementById('navLinks');
             
-            // تبديل القائمة في الجوال
+            
             menuToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 navLinks.classList.toggle('active');
             });
             
-            // إغلاق القائمة عند النقر خارجها
+          
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.navbar')) {
                     navLinks.classList.remove('active');
@@ -358,12 +357,11 @@
                 }
             });
             
-            // منع إغلاق القائمة عند النقر عليها
+          
             navLinks.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
             
-            // تفعيل dropdown في الشاشات الصغيرة
             document.querySelectorAll('.dropdown-toggle').forEach(item => {
                 item.addEventListener('click', function(e) {
                     if (window.innerWidth <= 992) {
@@ -371,7 +369,6 @@
                         const dropdown = this.parentNode;
                         dropdown.classList.toggle('active');
                         
-                        // إغلاق باقي القوائم
                         document.querySelectorAll('.dropdown').forEach(d => {
                             if (d !== dropdown) {
                                 d.classList.remove('active');
@@ -381,7 +378,6 @@
                 });
             });
             
-            // إغلاق القوائم المنسدلة عند تغيير حجم النافذة
             window.addEventListener('resize', function() {
                 if (window.innerWidth > 992) {
                     navLinks.classList.remove('active');
