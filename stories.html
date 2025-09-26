@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar"  dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>  قصص نجاح - GiveHope</title>
+      <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+       <link rel="stylesheet" href="stories.css">
+</head>
+<body>
+    
+
+     <div id="navbar-placeholder"></div>
+
+ <section class="page-header">
+        <h1>من أثر إحسانكم</h1>
+        <p>أثر يغير الحياة، وسعادة تنمو لعطاء مستمر</p>
+    </section>
+    
+    <!-- إحصائيات -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-number">500+</span>
+                <span class="stat-label">أسرة مستفيدة</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">150+</span>
+                <span class="stat-label">طالب تمت كفالتهم</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">200+</span>
+                <span class="stat-label">مشروع ناجح</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- قصص النجاح -->
+    <section class="stories-section">
+        <div class="section-title">
+            <h2>بعطائكم كنتم عونا لهذه الحالات</h2>
+        </div>
+
+        <div class="stories-grid">
+            <!-- قصة 1 -->
+            <div class="story-card">
+                <div class="story-image">
+                    <img src="" alt="قصة نجاح">
+                    <div class="story-category"> </div>
+                </div>
+                <div class="story-content">
+                    <h3>  </h3>
+                    <div class="story-meta">
+                        <!-- <span><i class="far fa-calendar"></i> 15 مارس 2024</span> -->
+                        <span class="story-time"><i class="far fa-clock"></i>  </span>
+
+                    </div>
+                    <p class="story-excerpt">  </p>
+                    <button class="read-more" data-story="1">اقرأ القصة كاملة</button>
+                </div>
+            </div>
+
+            <!-- قصة 2 -->
+            <div class="story-card">
+                <div class="story-image">
+                    <img src="" alt="قصة نجاح">
+                    <div class="story-category"></div>
+                </div>
+                <div class="story-content">
+                    <h3></h3>
+                    <div class="story-meta">
+                        <!-- <span><i class="far fa-calendar"></i> 2 فبراير 2024</span> -->
+                        <span class="story-time"><i class="far fa-clock"></i>  </span>
+                    </div>
+                    <p class="story-excerpt">  </p>
+                    <button class="read-more" data-story="2">اقرأ القصة كاملة</button>
+                </div>
+            </div>
+
+            <!-- قصة 3 -->
+            <div class="story-card">
+                <div class="story-image">
+                    <img src="" alt="قصة نجاح">
+                    <div class="story-category"></div>
+                </div>
+                <div class="story-content">
+                    <h3>  </h3>
+                    <div class="story-meta">
+                        <!-- <span><i class="far fa-calendar"></i> 10 يناير 2024</span> -->
+                        <span class="story-time"><i class="far fa-clock"></i>  </span>
+                    </div>
+                    <p class="story-excerpt"> </p>
+                    <button class="read-more" data-story="3">اقرأ القصة كاملة</button>
+                </div>
+            </div>
+
+
+  <!-- قصة 4 -->
+             <div class="story-card">
+                <div class="story-image">
+                    <img src="" alt="قصة نجاح">
+                    <div class="story-category"></div>
+                </div>
+                <div class="story-content">
+                    <h3>  </h3>
+                    <div class="story-meta">
+                        <!-- <span><i class="far fa-calendar"></i> 10 اغسطس 2024</span> -->
+                        <span class="story-time"><i class="far fa-clock"></i>  </span>
+                    </div>
+                    <p class="story-excerpt"> </p>
+                    <button class="read-more" data-story="4">اقرأ القصة كاملة</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم مشاركة القصة -->
+    <section class="share-story">
+        <h2>هل لديك قصة نجاح مع GiveHope؟</h2>
+        <p>شاركنا تجربتك لتحفيز الآخرين على المساهمة في صنع فرق حقيقي في حياة الاخرين</p>
+        <button class="share-btn">شارك قصتك</button>
+    </section>
+
+<!-- المودال -->
+<div class="story-modal" id="storyModal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>اكتب قصتك</h3>
+        <textarea id="storyInput" placeholder="اكتب قصتك هنا..." rows="6"></textarea>
+        <div class="modal-actions">
+            <button id="submitStory">إرسال</button>
+            <button id="cancelStory">إلغاء</button>
+        </div>
+    </div>
+</div>
+    <!-- نافذة القصة الكاملة -->
+    <div id="story-modal" class="story-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="modal-image" src="" alt="صورة القصة">
+                <div id="modal-category" class="modal-category"> </div>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2 id="modal-title"> </h2>
+                <div class="modal-meta">
+                    <!-- <span id="modal-date"><i class="far fa-calendar"></i> 15 مارس 2024</span> -->
+                    <span id="modal-time"><i class="far fa-clock"></i>  </span>
+                </div>
+                <div id="modal-content">
+                    <!-- محتوى القصة الكاملة سيتم إدراجه هنا -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <div id="footer-placeholder"></div>
+    <script src="stories.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
