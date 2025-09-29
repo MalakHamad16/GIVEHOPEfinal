@@ -1,83 +1,79 @@
 
       
-      
-        async function loadHTML(file, elementId) {
-            try {
-                const response = await fetch(file);
-                const data = await response.text();
-                const container = document.getElementById(elementId);
-                container.innerHTML = data;
-                
-                if (file === 'navbar.html') {
-                    initNavbar();
-                }
-                
-                return true;
-            } catch (error) {
-                console.error('Error loading HTML:', error);
-                return false;
-            }
+async function loadHTML(file, elementId) {
+    try {
+        const response = await fetch(file);
+        const data = await response.text();
+        const container = document.getElementById(elementId);
+        container.innerHTML = data;
+        
+        if (file === 'navbar.html') {
+            initNavbar();
         }
+        
+        return true;
+    } catch (error) {
+        console.error('Error loading HTML:', error);
+        return false;
+    }
+}
 
-        function initNavbar() {
-            const menuToggle = document.getElementById('menuToggle');
-            const navLinks = document.getElementById('navLinks');
-            
-            if (!menuToggle || !navLinks) return;
-            
-            menuToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navLinks.classList.toggle('active');
+function initNavbar() {
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    
+    if (!menuToggle || !navLinks) return;
+    
+    menuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        navLinks.classList.toggle('active');
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.navbar')) {
+            navLinks.classList.remove('active');
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
             });
-            
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.navbar')) {
-                    navLinks.classList.remove('active');
-                    document.querySelectorAll('.dropdown').forEach(dropdown => {
-                        dropdown.classList.remove('active');
-                    });
-                }
-            });
-            
-            if (navLinks) {
-                navLinks.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-            }
-            
-            document.querySelectorAll('.dropdown-toggle').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    if (window.innerWidth <= 992) {
-                        e.preventDefault();
-                        const dropdown = this.parentNode;
-                        dropdown.classList.toggle('active');
-                        
-                        document.querySelectorAll('.dropdown').forEach(d => {
-                            if (d !== dropdown) {
-                                d.classList.remove('active');
-                            }
-                        });
+        }
+    });
+    
+    if (navLinks) {
+        navLinks.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+    
+    document.querySelectorAll('.dropdown-toggle').forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (window.innerWidth <= 992) {
+                e.preventDefault();
+                const dropdown = this.parentNode;
+                dropdown.classList.toggle('active');
+                
+                document.querySelectorAll('.dropdown').forEach(d => {
+                    if (d !== dropdown) {
+                        d.classList.remove('active');
                     }
                 });
-            });
-            
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 992) {
-                    if (navLinks) navLinks.classList.remove('active');
-                    document.querySelectorAll('.dropdown').forEach(dropdown => {
-                        dropdown.classList.remove('active');
-                    }); 
-                }
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', function() {
-            loadHTML('navbar.html', 'navbar-placeholder');
-            loadHTML('footer.html', 'footer-placeholder');
-            
-          
+            }
         });
-      
+    });
+    
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 992) {
+            if (navLinks) navLinks.classList.remove('active');
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
+            }); 
+        }
+    });
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    loadHTML('navbar.html', 'navbar-placeholder');
+    loadHTML('footer.html', 'footer-placeholder');
+});
       
       //************************************************************************************************/
         // بيانات الأسئلة والأجوبة
