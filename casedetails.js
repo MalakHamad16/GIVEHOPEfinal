@@ -1,5 +1,7 @@
 
-      
+
+
+// دالة تحميل HTML
 async function loadHTML(file, elementId) {
     try {
         const response = await fetch(file);
@@ -18,6 +20,7 @@ async function loadHTML(file, elementId) {
     }
 }
 
+// تهيئة النافبار
 function initNavbar() {
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
@@ -70,6 +73,7 @@ function initNavbar() {
     });
 }
 
+// تحميل النافبار والفوتر عند بدء التحميل
 window.addEventListener('DOMContentLoaded', function() {
     loadHTML('navbar.html', 'navbar-placeholder');
     loadHTML('footer.html', 'footer-placeholder');
