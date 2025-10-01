@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="ar"  dir="rtl">
 <head>
@@ -18,7 +20,7 @@
         <p>أثر يغير الحياة، وسعادة تنمو لعطاء مستمر</p>
     </section>
     
-     <!-- إحصائيات -->
+    <!-- إحصائيات -->
     <section class="stats-section">
         <div class="stats-container">
             <div class="stat-item">
@@ -27,7 +29,7 @@
             </div>
             <div class="stat-item">
                 <span class="stat-number">150+</span>
-                <span class="stat-label">طالب تم كفالتهم</span>
+                <span class="stat-label">حاله تم كفالتها</span>
             </div>
             <div class="stat-item">
                 <span class="stat-number">200+</span>
@@ -52,7 +54,7 @@
                 <div class="story-content">
                     <h3>  </h3>
                     <div class="story-meta">
-                        <!-- <span><i class="far fa-calendar"></i> 15 مارس 2024</span> -->
+            <span class="story-type"><i class="type-icon"></i> <span class="type-text"></span></span>
                         <span class="story-time"><i class="far fa-clock"></i>  </span>
 
                     </div>
@@ -70,7 +72,7 @@
                 <div class="story-content">
                     <h3></h3>
                     <div class="story-meta">
-                        <!-- <span><i class="far fa-calendar"></i> 2 فبراير 2024</span> -->
+                        <span class="story-type"><i class="type-icon"></i> <span class="type-text"></span></span>
                         <span class="story-time"><i class="far fa-clock"></i>  </span>
                     </div>
                     <p class="story-excerpt">  </p>
@@ -87,7 +89,7 @@
                 <div class="story-content">
                     <h3>  </h3>
                     <div class="story-meta">
-                        <!-- <span><i class="far fa-calendar"></i> 10 يناير 2024</span> -->
+<span class="story-type"><i class="type-icon"></i> <span class="type-text"></span></span>
                         <span class="story-time"><i class="far fa-clock"></i>  </span>
                     </div>
                     <p class="story-excerpt"> </p>
@@ -105,11 +107,29 @@
                 <div class="story-content">
                     <h3>  </h3>
                     <div class="story-meta">
-                        <!-- <span><i class="far fa-calendar"></i> 10 اغسطس 2024</span> -->
+<span class="story-type"><i class="type-icon"></i> <span class="type-text"></span></span>
                         <span class="story-time"><i class="far fa-clock"></i>  </span>
                     </div>
                     <p class="story-excerpt"> </p>
                     <button class="read-more" data-story="4">اقرأ القصة كاملة</button>
+                </div>
+            </div>
+
+              <!-- قصة 5 -->
+             <div class="story-card">
+                <div class="story-image">
+                    <img src="" alt="قصة نجاح">
+                    <div class="story-category"></div>
+                </div>
+                <div class="story-content">
+                    <h3>  </h3>
+                    <div class="story-meta">
+<span class="story-type"><i class="type-icon"></i> <span class="type-text"></span></span>
+
+<span class="story-time"><i class="far fa-clock"></i>  </span>
+                    </div>
+                    <p class="story-excerpt"> </p>
+                    <button class="read-more" data-story="5">اقرأ القصة كاملة</button>
                 </div>
             </div>
         </div>
@@ -126,12 +146,49 @@
 <div class="story-modal" id="storyModal">
     <div class="modal-content">
         <span class="close-btn">&times;</span>
-        <h3>اكتب قصتك</h3>
-        <textarea id="storyInput" placeholder="اكتب قصتك هنا..." rows="6"></textarea>
-        <div class="modal-actions">
-            <button id="submitStory">إرسال</button>
-            <button id="cancelStory">إلغاء</button>
-        </div>
+        <h3>شارك قصتك معنا</h3>
+        
+        <form id="storyForm">
+            
+            <div class="form-group">
+                <label for="storyTitle">عنوان القصة:</label>
+                <input type="text" id="storyTitle" required placeholder="قصه احمد...">
+            </div>
+
+            <div class="form-group">
+                <label for="storyCategory">فئة القصة:</label>
+                <select id="storyCategory" required>
+                    <option value="" disabled selected>اختر فئة القصة</option>
+                    <option value="مساعدة تعليمية">مساعدة تعليمية</option>
+                    <option value="صحية">مساعدة صحية</option>
+                    <option value="معيشية">مساعدة معيشية</option>
+                    <option value="كفالات">كفالات </option>
+                    <option value="مشاريع">مشاريع خيرية</option>
+                    <option value="حملات"> حملات تبرع</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>نوع المشاركة:</label>
+                <div class="radio-group">
+                    <input type="radio" id="typeBeneficiary" name="storyType" value="مستفيد" required>
+                    <label for="typeBeneficiary">أنا مستفيد</label>
+                    
+                    <input type="radio" id="typeDonor" name="storyType" value="متبرع" required>
+                    <label for="typeDonor">أنا متبرع</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="storyContent">القصة كاملة:</label>
+                <textarea id="storyContent" placeholder="اكتب تفاصيل قصتك هنا..." rows="8" required></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="submit" id="submitStory">إرسال القصة</button>
+                <button type="button" id="cancelStory">إلغاء</button>
+            </div>
+        </form>
     </div>
 </div>
     <!-- نافذة القصة الكاملة -->
@@ -165,9 +222,16 @@
 
 
     <div id="footer-placeholder"></div>
-    <script src="stories.js"></script>
+   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script src="stories.js"></script>
 </body>
 </html>
+
+
+
+
+
 
 
 
