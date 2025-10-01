@@ -1,3 +1,5 @@
+
+
 // وظيفة لتحميل HTML
 async function loadHTML(file, elementId) {
     try {
@@ -81,7 +83,7 @@ function initNavbar() {
 }
 
 // وظيفة لتحديد ما إذا كانت الحالة عاجلة بناءً على الموعد النهائي
-function isCaseUrgent(deadline) {
+function isUrgent (deadline) {
     if (!deadline) return false;
     
     try {
@@ -104,6 +106,16 @@ function isCaseUrgent(deadline) {
     }
 }
 
+// وظيفة للحصول على اسم النوع بالعربية
+function getTypeName(type) {
+    const typeNames = {
+        "health": "صحية",
+        "education": "تعليمية",
+        "living": "معيشية",
+        "orphans": "رعاية أيتام"
+    };
+    return typeNames[type] || "أخرى";
+}
 // وظيفة لتحميل الحالات وعرضها
 async function loadCases() {
     const container = document.getElementById("casesContainer");
@@ -128,50 +140,49 @@ async function loadCases() {
             return;
         }
 
-        casesData.forEach(c => {
-            // حساب ما إذا كانت الحالة عاجلة بناءً على الموعد النهائي
-            const isUrgent = isCaseUrgent(c.deadline);
+   casesData.forEach(c => {
+    // استخدم اسم مختلف عشان ما يتعارض مع الدالة
+    const urgent = isUrgent(c.deadline);
+
+    const remaining = c.total - c.donated;
+    const percent = Math.floor((c.donated / c.total) * 100);
+
+    const card = document.createElement("div");
+    card.className = "case";
+    card.setAttribute("data-type", c.type);
+    card.setAttribute("data-urgent", urgent);
+    card.setAttribute("data-total", c.total);
+    card.setAttribute("data-donated", c.donated);
+    card.setAttribute("data-remaining", remaining);
+    card.setAttribute("data-id", c.id);
+
+    card.innerHTML = `
+        ${urgent ? '<span class="urgent-label">عاجل</span>' : ""}
+        <span class="case-badge ${c.type}-badge">${getTypeName(c.type)}</span>
+        <img src="${c.image}" alt="صورة الحالة" class="case-image" onerror="this.src='images/default-case.jpg'">
+        <div class="case-content">
+            <h3>${c.title}</h3>
+            <p>المبلغ المطلوب: ${c.total} د.أ</p>
+            <p>المبلغ المتبقي: <span class="remaining">${remaining}</span> د.أ</p>
+            <div class="progress-container">
+                <div class="progress-bar" style="width:${percent}%;"></div>
+            </div>
+            <p>نسبة الإنجاز: <span class="percentage">${percent}%</span></p>
+            <p class="deadline">الموعد النهائي: ${c.deadline}</p>
             
-            const remaining = c.total - c.donated;
-            const percent = Math.floor((c.donated / c.total) * 100);
+            <div class="case-actions">
+                <button class="btn-donate" onclick="window.location.href='DonateNow.html?id=${c.id}'">
+                    <i class="fas fa-hand-holding-heart"></i> تبرع الآن
+                </button>
+                <button class="btn-details" onclick="window.location.href='casedetails.html?id=${c.id}'">
+                    <i class="fas fa-eye"></i> التفاصيل
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(card);
+});
 
-            const card = document.createElement("div");
-            card.className = "case";
-            card.setAttribute("data-type", c.type);
-            card.setAttribute("data-urgent", isUrgent);
-            card.setAttribute("data-total", c.total);
-            card.setAttribute("data-donated", c.donated);
-            card.setAttribute("data-remaining", remaining);
-            card.setAttribute("data-id", c.id);
-
-            card.innerHTML = `
-                ${isUrgent ? '<span class="urgent-label">عاجل</span>' : ""}
-                <span class="case-badge ${c.type}-badge">${getTypeName(c.type)}</span>
-                <img src="${c.image}" alt="صورة الحالة" class="case-image" onerror="this.src='images/default-case.jpg'">
-                <div class="case-content">
-                    <h3>${c.title}</h3>
-                    
-                    <p>المبلغ المطلوب: ${c.total} د.أ</p>
-                    <p>المبلغ المتبقي: <span class="remaining">${remaining}</span> د.أ</p>
-                    <div class="progress-container">
-                        <div class="progress-bar" style="width:${percent}%;"></div>
-                    </div>
-                    <p>نسبة الإنجاز: <span class="percentage">${percent}%</span></p>
-                    <p class="deadline">الموعد النهائي: ${c.deadline}</p>
-                    
-                    <div class="case-actions">
-                        <button class="btn-donate" onclick="window.location.href='DonateNow.html?id=${c.id}'">
-                            <i class="fas fa-hand-holding-heart"></i> تبرع الآن
-                        </button>
-
-                        <button class="btn-details" onclick="window.location.href='casedetails.html?id=${c.id}'">
-                            <i class="fas fa-eye"></i> التفاصيل
-                        </button>
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
-        });
 
         initFilterSortSearch(); 
 
@@ -181,16 +192,6 @@ async function loadCases() {
     }
 }
 
-// وظيفة للحصول على اسم النوع بالعربية
-function getTypeName(type) {
-    const typeNames = {
-        "health": "صحية",
-        "education": "تعليمية",
-        "living": "معيشية",
-        "orphans": "رعاية أيتام"
-    };
-    return typeNames[type] || "أخرى";
-}
 
 // تهيئة الفلترة والترتيب والبحث
 function initFilterSortSearch() {
