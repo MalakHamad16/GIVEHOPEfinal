@@ -1,4 +1,5 @@
 
+
         async function loadHTML(file, elementId) {
             try {
                 const response = await fetch(file);
@@ -158,18 +159,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
         
         if (!name || !email || !phone || !idcard || !paymentMethod) {
-            alert('⚠️ يرجى ملء جميع الحقول المطلوبة واختيار طريقة الدفع');
-            return;
+Swal.fire({
+  icon: 'warning',
+  title: '⚠️ تنبيه',
+  text: 'يرجى ملء جميع الحقول المطلوبة واختيار طريقة الدفع'
+});            return;
         }
 
         if (!selectedAmount || selectedAmount <= 0) {
-            alert('⚠️ الرجاء إدخال مبلغ صحيح للتبرع');
-            return;
+Swal.fire({
+  icon: 'warning',
+  title: '⚠️ تنبيه',
+  text: 'الرجاء إدخال مبلغ صحيح للتبرع'
+});            return;
         }
 
         if (!/^\d+$/.test(phone) || !/^\d+$/.test(idcard)) {
-            alert("⚠️ رقم الهاتف والهوية يجب أن يكونا أرقام فقط");
-            return;
+Swal.fire({
+  icon: 'error',
+  title: '⚠️ خطأ في الإدخال',
+  text: 'رقم الهاتف والهوية يجب أن يكونا أرقام فقط'
+});            return;
         }
 
         donateBtn.disabled = true;
@@ -198,12 +208,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 3000);
 
             } else {
-                alert(`❌ فشل في عملية الدفع: ${paymentResult.message}`);
-            }
+Swal.fire({
+  icon: 'error',
+  title: '❌ فشل في عملية الدفع',
+  text: `${paymentResult.message}`
+});            }
 
         } catch (error) {
-            alert('❌ حدث خطأ أثناء عملية الدفع');
-            console.error('Payment error:', error);
+Swal.fire({
+  icon: 'error',
+  title: '❌ خطأ',
+  text: 'حدث خطأ أثناء عملية الدفع'
+});            console.error('Payment error:', error);
         } finally {
             donateBtn.disabled = false;
             donateBtn.innerHTML = '<i class="fas fa-heart"></i> تبرع الآن';
@@ -322,8 +338,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeModal('walletPaymentModal');
                 setTimeout(() => resolve({ success: true, transactionId: 'WALLET_' + Date.now() }), 1000);
             } else {
-                alert('رمز التحقق غير صحيح أو لم يتم إدخاله بشكل صحيح');
-            }
+Swal.fire({
+  icon: 'error',
+  title: '⚠️ تحقق',
+  text: 'رمز التحقق غير صحيح أو لم يتم إدخاله بشكل صحيح'
+});            }
         });
     });
 }
