@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استقبال الشكاوى - GiveHope</title>
+    
+    <!-- الخط الموحّد -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+    
+    
+    <link rel="stylesheet" href="casedetails.css"> 
+
+   
+    <style>
+        
+        body {
+            background: #f0f4f8;
+            color: #1e293b;
+              font-family: 'Cairo', sans-serif;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .hero-section {
+            text-align: center;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 18px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-section h1 {
+            color: var(--accent-color, #1E40AF);
+            font-size: 2.2rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .hero-section p {
+            font-size: 1.1rem;
+            color: var(--text-color, #1F2937);
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .contact-highlight {
+            background: #eef5ff;
+            padding: 1.2rem 2rem;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            margin: 1.5rem auto;
+            font-size: 1.15rem;
+            color: var(--secondary-color, #2563EB);
+            border: 1px solid #c7d9f0;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.08);
+        }
+
+        .contact-highlight i {
+            font-size: 1.5rem;
+            color: var(--primary-color, #3B82F6);
+        }
+
+        .complaint-form-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 18px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .complaint-form-box h2 {
+            text-align: center;
+            margin-bottom: 1.8rem;
+            color: var(--primary-color, #3B82F6);
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color, #1F2937);
+            text-align: right;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            background: #fafbff;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color, #3B82F6);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(to right, var(--primary-color, #3B82F6), var(--secondary-color, #2563EB));
+            color: white;
+            border: none;
+            padding: 13px 32px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 1.2rem;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            position: relative;
+        }
+
+        .success-message.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            background: none;
+            border: none;
+            color: #065f46;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .processing-info {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed #cbd5e1;
+            color: #475569;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .processing-info strong {
+            color: #1E40AF;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Page Header الموحّد -->
+    <section class="page-header">
+        <h1>استقبال الشكاوى</h1>
+        <p>" من استمع للآخرين وفهم شكواهم بنى جسوراً من الثقة والاحترام"</p>
+    </section>
+
+    <main>
+        <section class="hero-section">
+           
+            <p>نسعى دائمًا لتحسين جودة خدماتنا، ونرحب بكافة ملاحظاتكم وشكاويكم لتقييم أدائنا وتطويره.</p>
+            
+            <div class="contact-highlight">
+                <i class="fas fa-phone-volume"></i>
+                <span>للتواصل الفوري: <strong>0592900945</strong></span>
+            </div>
+        </section>
+
+        <div class="complaint-form-box">
+            <h2>أرسل شكواك عبر البريد الإلكتروني</h2>
+            <form id="complaintForm">
+                <div class="form-group">
+                    <label for="name">الاسم الكامل</label>
+                    <input type="text" id="name" required placeholder="أدخل اسمك الكامل">
+                </div>
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني</label>
+                    <input type="email" id="email" required placeholder="example@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="message">نص الشكوى</label>
+                    <textarea id="message" placeholder="اكتب تفاصيل شكوتك هنا..." required></textarea>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> إرسال الشكوى
+                </button>
+                <div id="successMessage" class="success-message">
+                    <i class="fas fa-check-circle"></i> تم إرسال شكوتك بنجاح!
+                    <button id="closeSuccess" class="close-btn">✖</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="processing-info">
+            <p>المدة المتوقعة لمعالجة الشكوى هي <strong>7 أيام عمل</strong>.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+   
+    <script>
+        function loadHTML(id, file) {
+            fetch(file)
+                .then(res => res.text())
+                .then(html => document.getElementById(id).innerHTML = html)
+                .catch(err => console.error('خطأ في تحميل', file, err));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHTML('navbar-placeholder', 'navbar.html');
+            loadHTML('footer-placeholder', 'footer.html');
+        });
+    </script>
+
+    <!-- سكريبتات الـ Navbar  -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const check = setInterval(() => {
+                const toggle = document.getElementById('menuToggle');
+                const nav = document.getElementById('navLinks');
+                if (toggle && nav) {
+                    clearInterval(check);
+                    toggle.onclick = (e) => {
+                        e.stopPropagation();
+                        nav.classList.toggle('active');
+                    };
+                    document.onclick = (e) => {
+                        if (!e.target.closest('.navbar')) {
+                            nav.classList.remove('active');
+                            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+                        }
+                    };
+                    nav.onclick = (e) => e.stopPropagation();
+                    document.querySelectorAll('.dropdown-toggle').forEach(btn => {
+                        btn.onclick = (e) => {
+                            if (window.innerWidth <= 992) {
+                                e.preventDefault();
+                                const dropdown = btn.parentElement;
+                                dropdown.classList.toggle('active');
+                                document.querySelectorAll('.dropdown').forEach(d => {
+                                    if (d !== dropdown) d.classList.remove('active');
+                                });
+                            }
+                        };
+                    });
+                    window.onresize = () => {
+                        if (window.innerWidth > 992) {
+                            nav.classList.remove('active');
+                            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+                        }
+                    };
+                }
+            }, 100);
+        });
+    </script>
+
+    <!-- وظيفة النموذج -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('complaintForm');
+            const successMsg = document.getElementById('successMessage');
+            const closeBtn = document.getElementById('closeSuccess');
+
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                form.reset();
+                successMsg.classList.add('show');
+                successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            };
+
+            closeBtn.onclick = () => {
+                successMsg.classList.remove('show');
+            };
+        });
+    </script>
+</body>
+</html>
