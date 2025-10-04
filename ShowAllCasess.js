@@ -112,7 +112,8 @@ function getTypeName(type) {
         "health": "صحية",
         "education": "تعليمية",
         "living": "معيشية",
-        "orphans": "رعاية أيتام"
+        "orphans": "رعاية أيتام" ,
+        "Emergency":"طوارئ"
     };
     return typeNames[type] || "أخرى";
 }
