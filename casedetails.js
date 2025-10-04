@@ -388,6 +388,7 @@ document.querySelector(".donate-button").setAttribute("href", `DonateNow.html?id
         });
 
 
+        
 });
 
 
@@ -397,6 +398,7 @@ function getTypeName(type) {
         case "education": return "تعليمية";
         case "living": return "معيشية";
         case "orphans": return "رعاية أيتام";
+        case "Emergency": return "طوارئ";
         default: return "أخرى";
     }
 }
