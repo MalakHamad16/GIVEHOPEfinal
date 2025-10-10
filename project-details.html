@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تفاصيل المشروع</title>
+   <!--bootstrap-->
+     <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!--fontawsom-->
+    <link href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="project-details.css" />
+  </head>
+<body class="bg-light">
+
+  <header>
+        <div class="navbar">
+            <div class="logo-container">
+                <div class="menu-toggle" id="menuToggle">☰</div>
+                <a href="#" class="logo">
+                    <img src="images/logo.png" alt="شعار ">
+                    <span>GiveHope</span>
+                </a>
+
+              
+            </div>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="#">الرئيسية</a>
+                <a href="#">عرض جميع الحالات</a>
+                  <a href="#">تقديم طلب دعم</a>
+
+                <div class="dropdown">
+                    <a href="#" class="dropdownToggle">خدماتنا ▼</a>
+                    <div class="dropdown-content">
+                        <a href="#">المشاريع</a>
+                        <a href="#">الكفالات</a>
+                        <a href="#">حملات التبرع</a>
+                        <a href="#">زكاة المال</a>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <a href="#" class="dropdownToggle">حسابي ▼</a>
+                    <div class="dropdown-content">
+                        <a href="#">تتبع حاله طلبي (صفحه المُستفيد)</a>
+                        <a href="#">تتبع تبرعاتي (صفحه المُتبرع)</a>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <a href="#" class="dropdownToggle">أكثر ▼</a>
+                    <div class="dropdown-content">
+                        <a href="#">إحصائيات</a>
+                        <a href="#">أبرز المحسنين</a>
+                        <a href="#">قصص النجاح</a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="auth-container">
+                <a href="#" class="auth-link">تسجيل الدخول</a>
+            </div>
+        </div>
+    </header>
+<section class="page-header mt-5 pt-5">
+            <h1>تفاصيل المشروع</h1>
+            <p>تابع تفاصيل المشروع وخطوات تنفيذه بدقة وشفافية.</p>
+        </section>
+<div class="content  d-flex justify-content-center align-items-center  " >
+ 
+  <div class=" container p-4">
+    <a href="projects.html" class="bttn"><i class="fa-solid fa-arrow-right"></i>الرجوع إلى صفحة المشاريع</a>
+
+    <div class="row">
+      <div class="col-md-4">
+       
+     <div class="text-center mb-3 w-100 mt-2 border rounded shadow " >
+    <img id="mainImage" src="educational.webp" class="w-100 rounded  shadow " style="height:280px;" alt="صورة المنتج">
+  </div>
+
+  
+  <div class="thumbs ">
+    <img src="food.jpg" width="100" class="active" onclick="changeImage(this)">
+    <img src="food.jpg" width="100" onclick="changeImage(this)">
+    <img src="food.jpg" width="100" onclick="changeImage(this)">
+    <img src="medical.jpg_wh1200.jpg" width="100" onclick="changeImage(this)">
+    <img src="medical.jpg_wh1200.jpg" width="100" onclick="changeImage(this)">
+    <img src="medical.jpg_wh1200.jpg" width="100" onclick="changeImage(this)">
+  </div>  
+  <div class="card card-number py-2 px-3 mt-4 border-0 shadow">
+ <div class="progress mt-2" style="height: 13px; border-radius: 5px;">
+      <div class="progress-bar bg-primary" role="progressbar" style="width: 40%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">40%</div>
+    </div>
+  <div class="row py-3 g-2"> 
+  
+    <!-- المبلغ المطلوب -->
+    <div class="col-sm-6">
+      <div class="p-1 px-2 py-3 border rounded-4 bg-light text-center bg-white shadow-sm">
+        <div class="text-primary">المبلغ المطلوب</div>
+        <div class="fw-bold">500 د.أ</div>
+      </div>
+    </div>
+
+    <!-- المبلغ المجموع -->
+    
+    <div class="col-sm-6">
+      <div class="p-1 px-2 py-3 border rounded-4 bg-light text-center bg-white shadow-sm">
+        <div class="text-primary">المبلغ المجموع</div>
+        <div class="fw-bold">300 د.أ</div>
+      </div>
+    </div>
+
+    <!-- المبلغ المتبقي -->
+    <div class="col-sm-6">
+      <div class="p-1 px-2 py-3 border rounded-4 bg-light bg-white text-center shadow-sm">
+        <div class=" text-primary">المبلغ المتبقي</div>
+        <div class="fw-bold">200 د.أ</div>
+      </div>
+    </div>
+
+    <!-- عدد المتبرعين -->
+    <div class="col-sm-6">
+      <div class="p-1 px-2 py-3 border rounded-4 bg-light text-center bg-white shadow-sm">
+        <div class=" text-primary">عدد المتبرعين</div>
+        <div class="fw-bold">15 متبرع</div>
+      </div>
+    </div>
+
+    <!-- تاريخ النشر -->
+    <div class="col-sm-6">
+      <div class="p-1 px-2 py-3 border rounded-4 bg-light text-center bg-white shadow-sm">
+        <div class=" text-primary">تاريخ النشر</div>
+        <div class="fw-bold">15-5-2025</div>
+      </div>
+    </div>
+
+    <!-- آخر موعد للتبرع -->
+    <div class="col-sm-6">
+      <div class="p-1 px-2 py-3 border rounded-4 bg-light text-center bg-white shadow-sm">
+        <div class=" text-primary">آخر موعد للتبرع</div>
+        <div class="fw-bold">20-6-2026</div>
+      </div>
+    </div>
+     <!--  زر التبرع والمشاركة-->
+    <div class="text-center mt-3 row">
+      <div class="col-sm-9">
+      <button class="btn btn-primary text-white w-100">
+    تبرع الآن
+      </button>
+      
+      </div>
+      <div class="col-sm-3">
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#shareModal" title="مشاركة">
+       <i class="fa-solid fa-share"></i></button> 
+</div>
+    </div>
+    </div>
+
+  </div>
+  
+      </div>
+
+
+      <div class="col-md-8 pt-2">
+       <div class="card border-0 shadow ">
+  <!-- Header -->
+  <div class="project-header bg-primary w-100">
+    تفاصيل المشروع
+  </div>
+<div class="p-4 pb-5">
+  <!-- Tabs -->
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab">الوصف</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report" type="button" role="tab">التقارير</button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="myTabContent">
+
+    <!-- وصف المشروع -->
+    <div class="tab-pane fade show active pt-3" id="desc" role="tabpanel">
+      <div class="card  card-color-desc">
+        <div class="card-body  ">
+          <h5 class="card-title ">وصف المشروع - بناء مدرسة</h5>
+               <p class="card-text">في العديد من المناطق المحتاجة، يواجه الأطفال صعوبة في الحصول على حقهم الأساسي في التعليم بسبب غياب البنية التحتية المناسبة. لذلك يهدف هذا المشروع إلى بناء مدرسة متكاملة تضم صفوف دراسية، مكتبة، ومختبرات حاسوب لتوفير بيئة تعليمية آمنة ومحفّزة.</p>
+
+         
+        </div>
+      </div>
+<div class="border-top my-4"></div>
+      <div class="card  card-color-aims">
+        <div class="card-body ">
+          <h5 class="card-title text-success"><i class="fa-solid fa-bullseye "></i>أهداف المشروع</h5>
+          <p class="card-text">
+إنشاء مبنى مدرسي مجهز بـ 12 صف دراسي.
+توفير مقاعد وأدوات تعليمية حديثة لـ 400 طالب وطالبة.
+بناء مكتبة مدرسية تحتوي على كتب ومراجع تعليمية.
+تجهيز مختبر حاسوب لدعم التعليم الرقمي.</p>
+         
+        </div>
+      </div>
+    </div>
+
+    <!-- التقارير -->
+    <div class="tab-pane fade" id="report" role="tabpanel">
+ 
+         <h5 class="mb-3 pt-3">التقارير</h5>
+  <p class="text-muted">هنا تجد أحدث التقارير حول تقدم المشروع.</p>
+
+  <!-- قائمة التقارير -->
+  <ul id="reportsList" class="list-group mb-3">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>📄تقرير أولي – <a href="#">تحميل PDF</a></span>
+      <div class=" admin-actions" style="display:none;">
+        <button class="btn btn-warning btn-sm edit-btn mx-1 text-white"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+        <button class="btn btn-danger btn-sm delete-btn text-white"><i class="fa-solid fa-trash"></i> حذف</button>
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>📄تقرير نصف سنوي – <a href="#">تحميل PDF</a></span>
+      <div class=" admin-actions" style="display:none;">
+        <button class="btn btn-warning btn-sm edit-btn mx-1 text-white"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+        <button class="btn btn-danger btn-sm delete-btn text-white"><i class="fa-solid fa-trash"></i> حذف</button>
+      </div>
+    </li>
+  </ul>
+
+  <!-- أزرار خاصة بالـ Admin -->
+  <div id="adminControls" style="display:none;">
+    <h5>إدارة التقارير</h5>
+    <button class="btn btn-primary btn-sm mb-2 mt-1 py-1" data-bs-toggle="modal" data-bs-target="#addReportModal">
+      <i class="fa-solid fa-plus"></i> إضافة تقرير جديد
+    </button>
+  </div>
+  <!-- رسالة عند عدم وجود تقارير -->
+<div id="noReportsMsg" class="alert alert-info text-center">
+  <p class="text-primary fw-bold">التقارير قريباً</p>
+  <p>سيتم إضافة التقارير والتحديثات عن المشروع هنا</p>
+</div>
+      </div>
+    </div>
+</div>
+  </div>
+  </div>
+  </div>
+
+    
+      </div>
+      </div>
+
+       
+      
+  
+    
+    
+    
+   
+   
+    
+  
+  
+ <!-- Modal لرفع تقرير جديد -->
+<div class="modal fade" id="addReportModal" tabindex="-1" aria-labelledby="addReportModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header d-flex justify-content-between">
+        <div>
+        <h5 class="modal-title" id="addReportModalLabel">إضافة تقرير جديد</h5>
+        </div>
+        <div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+      </div>
+      </div>
+      <div class="modal-body">
+        <form id="reportForm">
+          <div class="mb-3">
+            <label class="form-label">عنوان التقرير</label>
+            <input type="text" class="form-control" id="reportTitle" placeholder="مثال: تقرير نهائي">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">ملف التقرير (PDF)</label>
+            <input type="file" class="form-control" id="reportFile" accept="application/pdf">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button type="button" class="btn btn-primary py-1" onclick="saveReport()">حفظ التقرير</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal لتعديل تقرير -->
+<div class="modal fade" id="editReportModal" tabindex="-1" aria-labelledby="editReportModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header d-flex justify-content-between">
+        <div>
+        <h5 class="modal-title" id="editReportModalLabel">تعديل التقرير</h5>
+       </div>
+       <div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+      </div>
+      </div>
+      <div class="modal-body">
+        <form id="editReportForm">
+          <div class="mb-3">
+            <label class="form-label">عنوان التقرير الجديد</label>
+            <input type="text" class="form-control" id="editReportTitle">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button type="button" class="btn btn-warning text-white" onclick="updateReport()">حفظ التعديلات</button>
+      </div>
+    </div>
+  </div>
+</div>     
+  
+
+<!---->
+
+<!-- نافذة المشاركة -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header d-flex justify-content-between">
+        <div>
+        <h5 class="modal-title">مشاركة المشروع</h5>
+        </div>
+        <div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+      </div>
+      </div>
+      <div class="modal-body">
+        <p> ساهم معنا بنشر الخير وشارك المشروع مع أصدقائك:</p>
+
+        <!-- نسخ الرابط -->
+        <button onclick="copyLink()" id="copy-link" class="btn btn-sm btn-outline-secondary mb-2 w-100">
+         <i class="fa-solid fa-copy"></i> نسخ الرابط
+        </button>
+
+        <!-- واتساب -->
+        <a href="https://wa.me/?text=ادعم هذا المشروع: https://example.com/project/123"
+           target="_blank" class="btn btn-sm btn-success mb-2  ">
+         <i class="fab fa-whatsapp"></i>
+        </a>
+
+        <!-- فيسبوك -->
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://example.com/project/123"
+           target="_blank" class="btn btn-sm btn-primary mb-2">
+          <i class="fab fa-facebook"></i>
+        </a>
+
+        <!-- تويتر -->
+        <a href="https://twitter.com/intent/tweet?url=https://example.com/project/123&text=ادعم هذا المشروع"
+           target="_blank" class="btn btn-sm btn-dark mb-2 ">
+          <i class="fa-brands fa-x-twitter"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--footer-->
+<footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>عن GiveHope</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> من نحن ؟</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> فريق العمل</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> الشهادات والتقارير</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> الشفافية والمصداقية</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> الشروط والسياسات</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> استقبال الشكاوي</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>روابط سريعة</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> كيفية التبرع</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> الأسئلة الشائعة</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> شروط الاستخدام</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>اتصل بنا</h3>
+                <ul class="contact-list">
+                    <li><a href="mailto:Zaka.anb@hotmail.com"><i class="fas fa-envelope"></i></a></li>
+                    <li><a href="tel:092673570"><i class="fas fa-phone"></i></a></li>
+                    <li><a href="tel:+972592900945"><i class="fab fa-whatsapp"></i></a></li>
+                    <li><a href="https://www.facebook.com/share/1Z2HWWqSxJ/?mibextid=wwXIfr"><i class="fab fa-facebook"></i></a></li>
+                </ul>
+                <p class="contact-address"><i class="fas fa-map-marker-alt"></i> عنواننا : عنبتا - شارع السكة</p>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <p>© 2025 GiveHope. جميع الحقوق محفوظة</p>
+            <p>منصة خيرية تهدف إلى صناعة الأمل ومساعدة المحتاجين</p>
+        </div>
+    </footer>
+  
+  
+    <script>
+//navbar
+ document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const navLinks = document.getElementById('navLinks');
+            
+            
+            menuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('active');
+            });
+            
+          
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.navbar')) {
+                    navLinks.classList.remove('active');
+                    document.querySelectorAll('.dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+            
+          
+            navLinks.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            document.querySelectorAll('.dropdown-toggle').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 992) {
+                        e.preventDefault();
+                        const dropdown = this.parentNode;
+                        dropdown.classList.toggle('active');
+                        
+                        document.querySelectorAll('.dropdown').forEach(d => {
+                            if (d !== dropdown) {
+                                d.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            });
+            
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 992) {
+                    navLinks.classList.remove('active');
+                    document.querySelectorAll('.dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+        });
+
+
+
+//عرض الصور المصغرة 
+   function changeImage(element) {
+      document.getElementById('mainImage').src = element.src;
+      document.querySelectorAll('.thumbs img').forEach(img => img.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+  
+
+const isAdmin = false; 
+  let reportToEdit = null;
+
+  // تفعيل أدوات الأدمن
+  if (isAdmin) {
+    document.getElementById("adminControls").style.display = "block";
+    document.querySelectorAll(".admin-actions").forEach(div => {
+      div.style.display = "inline-flex";
+    });
+  }
+
+  // إضافة تقرير جديد
+  function saveReport() {
+    const title = document.getElementById("reportTitle").value;
+    const fileInput = document.getElementById("reportFile");
+    
+    if (!title || fileInput.files.length === 0) {
+      alert("الرجاء إدخال العنوان واختيار ملف PDF ✅");
+      return;
+    }
+
+    const reportsList = document.getElementById("reportsList");
+    const newItem = document.createElement("li");
+    newItem.className = "list-group-item d-flex justify-content-between align-items-center";
+    newItem.innerHTML = `<span>📄 ${title} – <a href="#">تحميل PDF</a></span>`;
+
+    if (isAdmin) {
+      const actions = document.createElement("div");
+      actions.className = " admin-actions";
+      actions.style.display = "inline-flex";
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "btn btn-warning btn-sm mx-1 text-white";
+      editBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> تعديل`;
+
+      editBtn.onclick = function () {
+        reportToEdit = newItem.querySelector("span");
+        document.getElementById("editReportTitle").value = reportToEdit.textContent.split("–")[0].trim();
+        const modal = new bootstrap.Modal(document.getElementById('editReportModal'));
+        modal.show();
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "btn btn-danger btn-sm text-white";
+      deleteBtn.innerHTML=`<i class="fa-solid fa-trash"></i> حذف`;
+      deleteBtn.onclick = function () {
+        newItem.remove();
+        alert("تم حذف التقرير ✅");
+      };
+
+      actions.appendChild(editBtn);
+      actions.appendChild(deleteBtn);
+      newItem.appendChild(actions);
+    }
+
+    reportsList.appendChild(newItem);
+
+    bootstrap.Modal.getInstance(document.getElementById('addReportModal')).hide();
+    document.getElementById("reportForm").reset();
+    alert("تم رفع التقرير ");
+  }
+
+  // تحديث التقرير بعد التعديل
+  function updateReport() {
+    const newTitle = document.getElementById("editReportTitle").value;
+    if (!newTitle) {
+      alert("الرجاء إدخال عنوان جديد ✅");
+      return;
+    }
+    reportToEdit.innerHTML =`<span> 📄 ${newTitle} – <a href="#">تحميل PDF</a></span>`;
+    bootstrap.Modal.getInstance(document.getElementById('editReportModal')).hide();
+    alert("تم تعديل التقرير ✅");
+  }
+
+  // تفعيل الحذف والتعديل للتقارير الحالية
+  document.querySelectorAll(".edit-btn").forEach(btn => {
+    btn.onclick = function () {
+      reportToEdit = btn.closest("li").querySelector("span");
+      document.getElementById("editReportTitle").value = reportToEdit.textContent.split("–")[0].trim();
+      const modal = new bootstrap.Modal(document.getElementById('editReportModal'));
+      modal.show();
+    };
+  });
+
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.onclick = function () {
+      btn.closest("li").remove();
+      alert("تم حذف التقرير ✅");
+    };
+  });
+
+  //مشاركة المشروع
+  function copyLink() {
+    const link = window.location.href; 
+    navigator.clipboard.writeText(link).then(() => {
+     
+      const msg = document.createElement("div");
+      msg.innerText = "✅ تم نسخ الرابط";
+      msg.style.color = "green";
+      msg.style.fontSize = "14px";
+      msg.style.marginTop = "10px";
+
+      const modalBody = document.querySelector("#shareModal .modal-body");
+      modalBody.appendChild(msg);
+
+      setTimeout(() => msg.remove(), 2000);
+    });
+  }
+  //رسالة عدم وجود تقارير بعد
+  function checkReports() {
+  const reportsList = document.getElementById("reportsList");
+  const noReportsMsg = document.getElementById("noReportsMsg");
+
+  if (reportsList.children.length === 0) {
+    noReportsMsg.style.display = "block"; // أظهر الرسالة
+  } else {
+    noReportsMsg.style.display = "none";  // أخفي الرسالة
+  }
+}
+
+// تشغيل عند بداية الصفحة
+checkReports();
+
+// عند الضغط على زر الحذف
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("delete-btn")) {
+    const reportItem = e.target.closest("li");
+    if (reportItem) {
+      reportItem.remove(); 
+      checkReports(); // فحص بعد الحذف
+    }
+  }
+});
+
+  </script>
+  <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
