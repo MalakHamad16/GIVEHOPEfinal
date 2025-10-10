@@ -1,0 +1,210 @@
+/* ==========================================
+   صفحة "استقبال الشكاوى" - GiveHope
+   ========================================== */
+
+/* -------------------------------
+   إعدادات عامة
+   ------------------------------- */
+body {
+  background: #f0f4f8;
+  color: #1e293b;
+  font-family: "Cairo", sans-serif;
+}
+
+main {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 20px;
+}
+
+/* -------------------------------
+   قسم  (Hero Section)
+   ------------------------------- */
+.hero-section {
+  text-align: center;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2.5rem;
+}
+
+.hero-section h1 {
+  color: #1e40af; /* لون أزرق داكن    */
+  font-size: 2.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.hero-section p {
+  font-size: 1.1rem;
+  color: #1f2937;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+}
+
+/* مربع معلومات التواصل */
+.contact-highlight {
+  background: #eef5ff;
+  padding: 1.2rem 2rem;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin: 1.5rem auto;
+  font-size: 1.15rem;
+  color: #2563eb; /* أزرق متوسط */
+  border: 1px solid #c7d9f0;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.08);
+}
+
+.contact-highlight i {
+  font-size: 1.5rem;
+  color: #3b82f6;
+}
+
+/* -------------------------------
+   نموذج الشكوى
+   ------------------------------- */
+.complaint-form-box {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.complaint-form-box h2 {
+  text-align: center;
+  margin-bottom: 1.8rem;
+  color: #3b82f6;
+  font-size: 1.8rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #1f2937;
+  text-align: right; /* مهم للغة العربية */
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  background: #fafbff;
+  font-family: "Cairo", sans-serif;
+  direction: rtl; /* لضمان كتابة النص من اليمين لليسار */
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-group textarea {
+  min-height: 150px;
+  resize: vertical; /* يسمح للمستخدم بتعديل الارتفاع */
+}
+
+/* زر الإرسال */
+.btn {
+  background: linear-gradient(to right, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  padding: 13px 32px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  font-family: "Cairo", sans-serif;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+}
+
+/* رسالة النجاح (مخفية افتراضيًا) */
+.success-message {
+  background: #d1fae5; /* خلفية خضراء فاتحة */
+  color: #065f46; /* نص أخضر داكن */
+  padding: 1.2rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+  margin-top: 1.2rem;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  position: relative;
+}
+
+.success-message.show {
+  display: block;
+  opacity: 1;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  left: 12px; /* لأن الصفحة RTL، "يسار" = جهة البداية */
+  background: none;
+  border: none;
+  color: #065f46;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+/* معلومات المعالجة */
+.processing-info {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed #cbd5e1;
+  color: #475569;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.processing-info strong {
+  color: #1e40af;
+}
+
+/* -------------------------------
+   تعديلات للهواتف
+   ------------------------------- */
+@media (max-width: 768px) {
+  .hero-section,
+  .complaint-form-box {
+    padding: 1.8rem;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+  }
+
+  .contact-highlight {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

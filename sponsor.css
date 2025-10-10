@@ -1,0 +1,186 @@
+/* تنسيق عام للبطاقات */
+.sponsor-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: white;
+  font-family: "Cairo", sans-serif;
+}
+
+.sponsor-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-image {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.sponsor-card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.amount-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #0d6efd;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+/* علامة "مكفول" */
+.sponsored-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #dc3545;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+/* تغيير خلفية البطاقة عند كونها مكفولة */
+.sponsor-card.sponsored {
+  opacity: 0.85;
+  border-color: #dc3545;
+}
+
+.sponsor-card.sponsored:hover {
+  opacity: 1;
+  border-color: #dc3545;
+}
+
+.card-body {
+  padding: 20px;
+  text-align: center;
+}
+
+.card-body h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: 600;
+}
+
+.duration-info {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.duration-item {
+  text-align: center;
+}
+
+.duration-item span {
+  display: block;
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 5px;
+}
+
+.duration-item strong {
+  font-size: 16px;
+  color: #0d6efd;
+  font-weight: 600;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.card-actions .btn {
+  font-family: "Cairo", sans-serif;
+  font-weight: 600;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.card-actions .btn-outline-primary {
+  border-color: #0d6efd;
+  color: #0d6efd;
+}
+
+.card-actions .btn-outline-primary:hover {
+  background: #0d6efd;
+  color: white;
+}
+
+.card-actions .btn-primary {
+  background: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.card-actions .btn-primary:hover {
+  background: #0b5ed7;
+  border-color: #0b5ed7;
+}
+
+/* زر الفلترة */
+.filter-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  font-family: "Cairo", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+  color: #495057;
+}
+
+.filter-btn.active {
+  background: #0d6efd;
+  color: white;
+}
+
+.filter-btn:hover {
+  background: #0b5ed7;
+  color: white;
+}
+
+/* تحسينات للجوال */
+@media (max-width: 768px) {
+  .sponsor-card {
+    margin-bottom: 20px;
+  }
+
+  .duration-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+}

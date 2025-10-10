@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إنشاء حملة - GiveHope</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="casedetails.css" />
+    <link rel="stylesheet" href="create-campaign.css" />
+  </head>
+  <body>
+    <div id="navbar-placeholder"></div>
+
+    <section class="page-header">
+      <h1>إنشاء حملة</h1>
+      <p>
+        ﴿ وَمَن يَفْعَلْ ذَٰلِكَ ابْتِغَاءَ مَرْضَاتِ اللَّهِ فَسَوْفَ نُؤْتِيهِ
+        أَجْرًا عَظِيمًا ﴾
+      </p>
+    </section>
+
+    <main>
+      <div class="form-box">
+        <h1>أنشئ الحملة</h1>
+        <form id="campaignForm">
+          <div class="form-group">
+            <label for="title">اسم الحملة</label>
+            <input
+              type="text"
+              id="title"
+              required
+              placeholder="مثال:سقيا ماء"
+            />
+          </div>
+          <div class="form-group">
+            <label for="goal">الهدف المالي</label>
+            <div class="amount-currency">
+              <input
+                type="number"
+                id="goal"
+                min="1"
+                required
+                placeholder="مثال: 10000"
+              />
+              <select id="currency" class="currency-select">
+                <option value="ILS">₪ شيكل</option>
+                <option value="USD">$ دولار</option>
+                <option value="JOD">د.أ دينار</option>
+                <option value="AED">د.إ درهم</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="duration">المدة</label>
+            <div class="duration-inputs">
+              <input
+                type="number"
+                id="durationValue"
+                min="1"
+                required
+                placeholder="30"
+              />
+              <select id="durationUnit">
+                <option value="days">أيام</option>
+                <option value="months">أشهر</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">الوصف</label>
+            <textarea
+              id="description"
+              required
+              placeholder="اشرح هدف الحملة وسبب أهميتها..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="image">صورة الحملة (اختياري)</label>
+            <input type="file" id="image" accept="image/*" />
+            <div class="preview-image" id="imagePreview">
+              <i class="fas fa-image"></i>
+            </div>
+          </div>
+          <button type="submit" class="btn">
+            <i class="fas fa-paper-plane"></i> إنشاء الحملة
+          </button>
+        </form>
+      </div>
+
+      <div class="success-message" id="successMsg">تم إنشاء الحملة بنجاح!</div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- تحميل المكونات -->
+    <script>
+      function loadHTML(id, file) {
+        fetch(file)
+          .then((res) => res.text())
+          .then((html) => (document.getElementById(id).innerHTML = html))
+          .catch((err) => console.error("خطأ في تحميل", file, err));
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        loadHTML("navbar-placeholder", "navbar.html");
+        loadHTML("footer-placeholder", "footer.html");
+      });
+    </script>
+
+    <!-- سكريبتات الـ Navbar -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const check = setInterval(() => {
+          const toggle = document.getElementById("menuToggle");
+          const nav = document.getElementById("navLinks");
+          if (toggle && nav) {
+            clearInterval(check);
+            toggle.onclick = (e) => {
+              e.stopPropagation();
+              nav.classList.toggle("active");
+            };
+            document.onclick = (e) => {
+              if (!e.target.closest(".navbar")) {
+                nav.classList.remove("active");
+                document
+                  .querySelectorAll(".dropdown")
+                  .forEach((d) => d.classList.remove("active"));
+              }
+            };
+            nav.onclick = (e) => e.stopPropagation();
+            document.querySelectorAll(".dropdown-toggle").forEach((btn) => {
+              btn.onclick = (e) => {
+                if (window.innerWidth <= 992) {
+                  e.preventDefault();
+                  const dropdown = btn.parentElement;
+                  dropdown.classList.toggle("active");
+                  document.querySelectorAll(".dropdown").forEach((d) => {
+                    if (d !== dropdown) d.classList.remove("active");
+                  });
+                }
+              };
+            });
+            window.onresize = () => {
+              if (window.innerWidth > 992) {
+                nav.classList.remove("active");
+                document
+                  .querySelectorAll(".dropdown")
+                  .forEach((d) => d.classList.remove("active"));
+              }
+            };
+          }
+        }, 100);
+      });
+    </script>
+
+    <script src="create-campaign.js"></script>
+  </body>
+</html>
