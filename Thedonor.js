@@ -1196,8 +1196,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // ---------------------------------------------------------------------
     // ملاحظة: دالة loadHTML يجب أن تكون داخل ملف main.js أو يتم استدعاؤها بشكل صحيح
 
-    loadHTML('navbar.html', 'navbar-placeholder');
-    loadHTML('footer.html', 'footer-placeholder');
+    loadHTML('navbar.html', 'navbar-container');
+    loadHTML('footer.html', 'footer-container');
 
     updateStatCards(); // 🛑 تحديث الإحصائيات أولاً
     displayActiveCampaigns();
