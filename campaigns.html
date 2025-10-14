@@ -14,8 +14,8 @@
     />
     <link rel="stylesheet" href="casedetails.css" />
     <link rel="stylesheet" href="campaigns.css" />
-    <!-- ملف الأنماط الخاص -->
   </head>
+
   <body>
     <div id="navbar-placeholder"></div>
 
@@ -25,43 +25,59 @@
     </section>
 
     <main>
-      <!-- زر إنشاء حملة (يظهر فقط للإداري) -->
-      <div
-        id="adminCreateBtn"
-        style="display: none; text-align: center; margin-bottom: 2rem"
-      >
+      <!-- زر إنشاء حملة (للإداري) -->
+      <div id="adminCreateBtn" class="admin-btn" style="display: none">
         <a href="create-campaign.html" class="btn-create">
           <i class="fas fa-plus-circle"></i> إنشاء حملة جديدة
         </a>
       </div>
 
-      <!-- شبكة الحملات -->
-      <div class="campaigns-grid" id="campaignsContainer">
-        <!-- سيتم ملؤها بالجافاسكربت -->
-      </div>
+      <!-- شريط الفلترة -->
+      <div id="filterBar"></div>
+
+      <!-- الحملات العامة -->
+      <div class="campaigns-grid" id="campaignsContainer"></div>
+
+      <!-- الحملات المكتملة -->
+      <div class="campaigns-grid" id="completedCampaigns"></div>
     </main>
 
-    <!-- Modal التفاصيل -->
+    <!-- نافذة التفاصيل (Modal) -->
     <div class="modal-overlay" id="detailModal">
       <div class="modal-content">
         <button class="modal-close">&times;</button>
-        <h2 id="modalTitle"></h2>
+        <h2 id="modalHeading"></h2>
+
         <div class="modal-info">
-          <p><strong>المبلغ المطلوب:</strong> <span id="modalGoal"></span></p>
-          <p><strong>المدة:</strong> <span id="modalDuration"></span></p>
+          <!-- السطر الأول: اسم الحملة + رقم الحملة -->
+          <div class="modal-info-row">
+            <span><strong>اسم الحملة:</strong> <span id="modalTitle"></span></span>
+            <span><strong>رقم الحملة:</strong> <span id="modalId"></span></span>
+          </div>
+
+          <!-- السطر الثاني: تاريخ البداية + تاريخ النهاية -->
+          <div class="modal-info-row">
+            <span><strong>تاريخ البداية:</strong> <span id="modalStart"></span></span>
+            <span><strong>تاريخ النهاية:</strong> <span id="modalEnd"></span></span>
+          </div>
+
+          <!-- السطر الثالث: الهدف المالي + المبلغ الحالي -->
+          <div class="modal-info-row">
+            <span><strong>الهدف المالي:</strong> <span id="modalGoal"></span></span>
+            <span><strong>المبلغ الحالي:</strong> <span id="modalRaised"></span></span>
+          </div>
         </div>
+
         <div class="modal-desc" id="modalDesc"></div>
-        <a
-          href="donate.html?type=donation"
-          class="btn btn-primary modal-donate-btn"
-          >تبرع الآن</a
-        >
+
+        <!-- زر التبرع يظهر حسب حالة المستخدم والحملة -->
+        <div class="modal-donate-btn"></div>
       </div>
     </div>
 
     <div id="footer-placeholder"></div>
 
-    <!-- تحميل المكونات -->
+    <!-- تحميل الهيدر والفوتر -->
     <script>
       function loadHTML(id, file) {
         fetch(file)
@@ -75,7 +91,7 @@
       });
     </script>
 
-    <!-- سكريبتات الـ Navbar (مثل السابق) -->
+    <!-- سكريبت القائمة -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const check = setInterval(() => {
@@ -95,39 +111,17 @@
                   .forEach((d) => d.classList.remove("active"));
               }
             };
-            nav.onclick = (e) => e.stopPropagation();
-            document.querySelectorAll(".dropdown-toggle").forEach((btn) => {
-              btn.onclick = (e) => {
-                if (window.innerWidth <= 992) {
-                  e.preventDefault();
-                  const dropdown = btn.parentElement;
-                  dropdown.classList.toggle("active");
-                  document.querySelectorAll(".dropdown").forEach((d) => {
-                    if (d !== dropdown) d.classList.remove("active");
-                  });
-                }
-              };
-            });
-            window.onresize = () => {
-              if (window.innerWidth > 992) {
-                nav.classList.remove("active");
-                document
-                  .querySelectorAll(".dropdown")
-                  .forEach((d) => d.classList.remove("active"));
-              }
-            };
           }
         }, 100);
       });
     </script>
 
-    <!-- ملف الجافاسكربت الرئيسي -->
+    <!-- سكريبت الحملات -->
     <script src="campaigns.js"></script>
-    <!-- تحديد نوع الصفحة قبل تحميل الشات بوت -->
-    <!-- تحديد نوع الصفحة قبل تحميل الشات بوت -->
+
+    <!-- تحديد نوع الصفحة -->
     <script>
-      // عيّن نوع الصفحة
-      window.pageType = "default";
+      window.pageType = "campaigns";
     </script>
     <script src="loadChatbot.js"></script>
   </body>

@@ -41,6 +41,19 @@ main {
   font-family: "Cairo", sans-serif;
   background: #fafbff;
 }
+
+/* ---------- تعديل حقل التاريخ ---------- */
+input[type="date"] {
+  text-align: right;       /* النص على اليمين */
+  direction: ltr;          /* التاريخ يظهر بالإنجليزي داخل البوكس */
+  padding-left: 36px;      /* مساحة لأيقونة التقويم على اليسار */
+  background-position: left center;
+  background-repeat: no-repeat;
+  font-family: "Cairo", sans-serif;
+  font-size: 1.05rem;
+}
+
+/* ---------- تنسيقات إضافية ---------- */
 .duration-inputs {
   display: flex;
   gap: 12px;
@@ -109,7 +122,7 @@ main {
 /* تنسيق المبلغ والعملة */
 .amount-currency {
   display: flex;
-  gap: 12px; /* نفس gap في .duration-inputs */
+  gap: 12px;
 }
 
 .amount-currency input {

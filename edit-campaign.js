@@ -1,100 +1,201 @@
-// edit-campaign.js
-
-// بيانات تجريبية للحملة الحالية (أضف حقل العملة)
-const currentCampaign = {
-  id: 1,
-  title: "سقيا ماء",
-  goal: 20000,
-  currency: "ILS", // ✅ أضف العملة هنا
-  durationValue: 60,
-  durationUnit: "days",
-  description:
-    "كن عوناً في توفير السقيا والمياه العذبة في المناطق والقرى الأشد احتياجا للماء",
-  imageUrl: "images/water.jpg",
-};
-
-let originalData = { ...currentCampaign };
-
 document.addEventListener("DOMContentLoaded", () => {
-  // ملء الحقول بالبيانات الحالية (بما في ذلك العملة)
-  document.getElementById("title").value = currentCampaign.title;
-  document.getElementById("goal").value = currentCampaign.goal;
-  document.getElementById("currency").value = currentCampaign.currency; // ✅
-  document.getElementById("durationValue").value =
-    currentCampaign.durationValue;
-  document.getElementById("durationUnit").value = currentCampaign.durationUnit;
-  document.getElementById("description").value = currentCampaign.description;
+  // ---------- عناصر الفورم ----------
+  const campaignCode = document.getElementById("campaignCode");
+  const title = document.getElementById("title");
+  const goal = document.getElementById("goal");
+  const currency = document.getElementById("currency");
+  const startDate = document.getElementById("startDate");
+  const endDate = document.getElementById("endDate");
+  const calculatedDuration = document.getElementById("calculatedDuration");
+  const statusInput = document.getElementById("status");
+  const description = document.getElementById("description");
+  const pauseYes = document.getElementById("pauseYes");
+  const pauseNo = document.getElementById("pauseNo");
+  const editForm = document.getElementById("editForm");
+  const successMsg = document.getElementById("successMsg");
 
-  // عرض الصورة الحالية
-  const preview = document.getElementById("imagePreview");
-  if (currentCampaign.imageUrl) {
-    preview.innerHTML = `<img src="${currentCampaign.imageUrl}" alt="حملة" style="width:100%;height:100%;border-radius:12px;object-fit:cover;">`;
+  const imageInput = document.getElementById("image");
+  const imagePreview = document.getElementById("imagePreview");
+  const cancelBtn = document.getElementById("cancelBtn");
+
+  // ---------- تحميل بيانات الحملة ----------
+  let originalCampaignData = {}; // لتخزين البيانات الأصلية
+
+  function loadCampaignData() {
+    // بيانات وهمية مؤقتة قبل الربط بالباك اند
+    const campaignData = {
+      code: "CAMP123",
+      title: "حملة علاجية للأطفال",
+      goal: 5000,
+      currency: "ILS",
+      startDate: "2025-10-15",
+      endDate: "2025-12-15",
+      status: "نشطة",
+      description: "وصف الحملة هنا...",
+      imageUrl: "default-campaign.jpg"
+    };
+
+    // نسخ البيانات الأصلية
+    originalCampaignData = { ...campaignData };
+
+    campaignCode.value = campaignData.code;
+    title.value = campaignData.title;
+    goal.value = campaignData.goal;
+    currency.value = campaignData.currency;
+    startDate.value = campaignData.startDate;
+    endDate.value = campaignData.endDate;
+    description.value = campaignData.description;
+
+    // عرض الصورة الحالية
+    setImagePreview(campaignData.imageUrl);
+
+    updateDuration();
+    updateStatus();
   }
 
-  // معاينة صورة جديدة
-  document.getElementById("image")?.addEventListener("change", (e) => {
+  // ---------- معاينة الصورة ----------
+  function setImagePreview(url) {
+    imagePreview.innerHTML = `<img src="${url}" alt="صورة الحملة" style="width:100%;height:auto;border-radius:5px;">`;
+  }
+
+  imageInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (ev) => {
-        preview.innerHTML = `<img src="${ev.target.result}" alt="معاينة" style="width:100%;height:100%;border-radius:12px;object-fit:cover;">`;
+      reader.onload = function (e) {
+        setImagePreview(e.target.result);
       };
       reader.readAsDataURL(file);
+    } else {
+      // إذا لم يختار أي صورة جديدة، عرض الصورة القديمة
+      setImagePreview(originalCampaignData.imageUrl);
     }
   });
 
-  // زر الإلغاء
-  document.getElementById("cancelBtn")?.addEventListener("click", () => {
-    if (confirm("هل أنت متأكد من إلغاء التعديلات؟")) {
-      document.getElementById("title").value = originalData.title;
-      document.getElementById("goal").value = originalData.goal;
-      document.getElementById("currency").value = originalData.currency;
-      document.getElementById("durationValue").value =
-        originalData.durationValue;
-      document.getElementById("durationUnit").value = originalData.durationUnit;
-      document.getElementById("description").value = originalData.description;
+  // ---------- حساب المدة ----------
+  function updateDuration() {
+    const start = new Date(startDate.value);
+    const end = new Date(endDate.value);
 
-      if (originalData.imageUrl) {
-        preview.innerHTML = `<img src="${originalData.imageUrl}" alt="حملة" style="width:100%;height:100%;border-radius:12px;object-fit:cover;">`;
+    if (start && end) {
+      if (end < start) {
+        // إذا تاريخ النهاية قبل البداية، عرض تحذير في صندوق المدة
+        calculatedDuration.value = "❌ التاريخ غير صحيح!";
+        calculatedDuration.style.color = "red";
+        return false;
       } else {
-        preview.innerHTML = '<i class="fas fa-image"></i>';
-      }
+        const diffTime = end - start;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-      document.getElementById("image").value = "";
+        let durationText = "";
+        if (diffDays < 30) {
+          durationText = `${diffDays} يوم`;
+        } else if (diffDays < 365) {
+          const months = Math.floor(diffDays / 30);
+          durationText = `${months} شهر`;
+        } else {
+          const years = Math.floor(diffDays / 365);
+          durationText = `${years} سنة`;
+        }
+
+        calculatedDuration.value = durationText;
+        calculatedDuration.style.color = "black"; // إعادة اللون الطبيعي
+        return true;
+      }
+    } else {
+      calculatedDuration.value = "";
+      calculatedDuration.style.color = "black";
+      return false;
     }
+  }
+
+  // ---------- تحديث الحالة ----------
+  function updateStatus() {
+    const today = new Date();
+    const start = new Date(startDate.value);
+    const end = new Date(endDate.value);
+
+    if (statusInput.dataset.manual !== "true") {
+      if (today < start) {
+        statusInput.value = "مجدولة";
+      } else if (today >= start && today <= end) {
+        statusInput.value = "نشطة";
+      } else if (today > end) {
+        statusInput.value = "منتهية";
+      }
+    }
+  }
+
+  // ---------- زر التعليق ----------
+  pauseYes.addEventListener("click", () => {
+    statusInput.value = "معلقة";
+    statusInput.dataset.manual = "true";
   });
 
-  // ✅ حدث إرسال واحد فقط
-  document.getElementById("editForm")?.addEventListener("submit", (e) => {
+  pauseNo.addEventListener("click", () => {
+    statusInput.dataset.manual = "false";
+    updateStatus();
+  });
+
+  // ---------- التحقق من التواريخ عند التغيير ----------
+  startDate.addEventListener("change", () => {
+    updateDuration();
+    updateStatus();
+  });
+
+  endDate.addEventListener("change", () => {
+    updateDuration();
+    updateStatus();
+  });
+
+  // ---------- زر إلغاء التعديل ----------
+  cancelBtn.addEventListener("click", () => {
+    campaignCode.value = originalCampaignData.code;
+    title.value = originalCampaignData.title;
+    goal.value = originalCampaignData.goal;
+    currency.value = originalCampaignData.currency;
+    startDate.value = originalCampaignData.startDate;
+    endDate.value = originalCampaignData.endDate;
+    description.value = originalCampaignData.description;
+
+    statusInput.dataset.manual = "false";
+    updateStatus();
+
+    setImagePreview(originalCampaignData.imageUrl);
+    updateDuration();
+  });
+
+  // ---------- حفظ التعديلات ----------
+  editForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    // جمع جميع البيانات (بما في ذلك العملة)
-    const title = document.getElementById("title").value;
-    const goal = document.getElementById("goal").value;
-    const currency = document.getElementById("currency").value;
-    const durationValue = document.getElementById("durationValue").value;
-    const durationUnit = document.getElementById("durationUnit").value;
-    const description = document.getElementById("description").value;
+    if (!updateDuration()) {
+      // الادمن سيرى التحذير في صندوق المدة
+      return;
+    }
 
-    console.log("بيانات الحملة المعدّلة:", {
-      title,
-      goal,
-      currency,
-      durationValue,
-      durationUnit,
-      description,
-    });
+    const updatedCampaign = {
+      code: campaignCode.value,
+      title: title.value,
+      goal: goal.value,
+      currency: currency.value,
+      startDate: startDate.value,
+      endDate: endDate.value,
+      status: statusInput.value,
+      description: description.value,
+      imageFile: imageInput.files[0] || null
+    };
 
-    // لاحقًا: إرسال البيانات إلى الباك-إند عبر fetch()
+    // هنا يمكن إرسال البيانات للباك اند لاحقًا
+    console.log("حفظ الحملة:", updatedCampaign);
 
-    // عرض رسالة النجاح
-    const successMsg = document.getElementById("successMsg");
+    // رسالة نجاح مؤقتة
     successMsg.style.display = "block";
-    successMsg.scrollIntoView({ behavior: "smooth", block: "center" });
-
-    // إخفاء الرسالة بعد 3 ثوانٍ
     setTimeout(() => {
       successMsg.style.display = "none";
     }, 3000);
   });
+
+  // ---------- تحميل البيانات عند البداية ----------
+  loadCampaignData();
 });
