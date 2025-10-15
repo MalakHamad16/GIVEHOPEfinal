@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الإحصائيات</title>
+  <!--bootstrap-->
+     <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<!--fontawsom-->
+    <link href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="projects.css" />
+    <link rel="stylesheet" href="statistics.css" />
+
+  
+</head>
+
+<body >
+
+   <header>
+        <div class="navbar">
+            <div class="logo-container">
+                <div class="menu-toggle" id="menuToggle">☰</div>
+                <a href="#" class="logo">
+                    <img src="images/logo.png" alt="شعار ">
+                    <span>GiveHope</span>
+                </a>
+
+              
+            </div>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="#">الرئيسية</a>
+                <a href="#">عرض جميع الحالات</a>
+                  <a href="#">تقديم طلب دعم</a>
+
+                <div class="dropdown">
+                    <a href="#" class="dropdownToggle">خدماتنا ▼</a>
+                    <div class="dropdown-content">
+                        <a href="#">المشاريع</a>
+                        <a href="#">الكفالات</a>
+                        <a href="#">حملات التبرع</a>
+                        <a href="#">زكاة المال</a>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <a href="#" class="dropdownToggle">حسابي ▼</a>
+                    <div class="dropdown-content">
+                        <a href="#">تتبع حاله طلبي (صفحه المُستفيد)</a>
+                        <a href="#">تتبع تبرعاتي (صفحه المُتبرع)</a>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <a href="#" class="dropdownToggle">أكثر ▼</a>
+                    <div class="dropdown-content">
+                        <a href="#">إحصائيات</a>
+                        <a href="#">أبرز المحسنين</a>
+                        <a href="#">قصص النجاح</a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="auth-container">
+                <a href="#" class="auth-link">تسجيل الدخول</a>
+            </div>
+        </div>
+    </header>
+   <section class="page-header mt-5 pt-5">
+            <h1>الإحصائيات</h1>
+            <p>نظرة شاملة ومفصلة على جميع الأنشطة والإحصائيات  </p>
+    </section>
+<div class="mb-3 mx-3">
+     <!-- محتويات التبويبات -->
+   <div class="row g-3 ">
+         <div class="col-md-3">
+          <div class="card  text-bg-light shadow-sm " style="backdrop-filter: blur(5px);">
+          <div class="card-body d-flex justify-content-between align-items-center">
+         <div>
+          <p class="text-primary mb-1">إجمالي التبرعات</p>
+          <h4 id="totalDonations" class="text-primary fw-bold mb-2">-</h4>
+          <p class="text-muted small mb-2">المبلغ الإجمالي المجموع </p>
+         <div class="d-flex align-items-center gap-2">
+        
+      </div>
+    </div>
+    <div class="bg-primary text-white p-3 rounded shadow d-flex align-items-center justify-content-center fs-3">
+      <i class="fa-solid fa-coins"></i>
+    </div>
+    </div>
+  </div>
+         </div>
+
+    <div class="col-md-3">
+        <div class="card  text-bg-light shadow-sm " style="backdrop-filter: blur(5px);">
+  <div class="card-body d-flex justify-content-between align-items-center">
+    <div>
+      <p class="text-primary mb-1">عدد المتبرعين </p>
+     <h4 id="donorsCount" class="text-primary fw-bold mb-2">-</h4>
+      <p class="text-muted small mb-2">متبرع فعال  </p>
+      <div class="d-flex align-items-center gap-2">
+        
+      </div>
+    </div>
+    <div class="bg-primary text-white p-3 rounded shadow d-flex align-items-center justify-content-center fs-3">
+     <i class="fa-solid fa-users"></i>
+    </div>
+    </div>
+  </div>
+</div>
+
+ <div class="col-md-3"><div class="card  text-bg-light shadow-sm " style="backdrop-filter: blur(5px);">
+  <div class="card-body d-flex justify-content-between align-items-center">
+    <div>
+      <p class="text-primary mb-1">عدد المستفيدين  </p>
+     <h4 id="beneficiaries" class="text-primary fw-bold mb-2">-</h4>
+      <p class="text-muted small mb-2"> شخص استفاد من التبرعات  </p>
+      <div class="d-flex align-items-center gap-2">
+        
+      </div>
+    </div>
+    <div class="bg-primary text-white p-3 rounded shadow d-flex align-items-center justify-content-center fs-3">
+      <i class="fa-solid fa-gift"></i>
+    </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-3">
+  <div class="card  text-bg-light shadow-sm mb-4" style="backdrop-filter: blur(5px);">
+  <div class="card-body d-flex justify-content-between align-items-center">
+    <div>
+      <p class="text-primary mb-1">الحملات النشطة</p>
+     <h4 id="activeCampaigns" class="text-primary fw-bold mb-2">-</h4>
+      <p class="text-muted small mb-2"> حملة قيد التنفيذ   </p>
+      <div class="d-flex align-items-center gap-2">
+        
+      </div>
+    </div>
+    <div class="bg-primary text-white p-3 rounded shadow d-flex align-items-center justify-content-center fs-3">
+      <i class="fa-solid fa-bullseye"></i>
+    </div>
+    </div>
+  </div>
+</div>
+
+ 
+        </div>
+  </div> 
+         <div class="filter-card rounded-4 mb-3 mx-3">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <span class="filter-label">عرض البيانات:</span>
+      
+      <div class=" " role="group">
+        <button type="button" class="btn btn-outline-primary">
+          <i class="fa-regular fa-clock"></i> يومي
+        </button>
+        <button type="button" class="btn btn-outline-primary">
+          <i class="fa-regular fa-calendar"></i> أسبوعي
+        </button>
+        <button type="button" class="btn btn-selected">
+          <i class="fa-solid fa-calendar-days"></i> شهري
+        </button>
+        <button type="button" class="btn btn-outline-primary">
+          <i class="fa-solid fa-chart-line"></i> سنوي
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class=" mx-3 mb-3">
+    
+
+   
+
+        <div class="row  g-3">
+           <div class="col-md-6">
+            <div class=" card p-4">
+             <h6>فئات التبرعات</h6>
+               <div>
+               <canvas id="donationChart" height="350px"></canvas>
+               </div>
+   
+  </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="card p-4">
+              <h6>عدد المتبرعين شهرياً</h6>
+              <canvas id="donorsChart" height="350px"></canvas>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="card p-4">
+              <h6>اتجاه التبرعات الشهرية</h6>
+              <canvas id="donationsChart" height="350px"></canvas>
+            </div>
+          </div>
+         
+       
+       </div>
+
+       
+         <div class="row g-4 mt-4">
+
+    <!-- متوسط التبرع -->
+    <div class=" col-md-4">
+      <div class="py-1 px-3 card shadow-sm d-flex flex-row align-items-center justify-content-between gap-3">
+       
+        <div>
+          <p class="text-muted mb-1 pt-1">متوسط التبرع</p>
+          <h4 class="fw-bold text-dark">485 د.أ</h4>
+          <p class="small text-success"> من الشهر السابق</p>
+        </div>
+         <div class="icon-box bg-success bg-gradient">
+          <i class="fa-solid fa-coins"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- متبرعون جدد -->
+    <div class=" col-md-4">
+      <div class="card py-1 px-3 shadow-sm d-flex flex-row align-items-center justify-content-between gap-3">
+       
+        <div >
+          <p class="text-muted mb-1 pt-1">متبرعون جدد</p>
+          <h4 class="fw-bold text-dark">1,247</h4>
+          <p class="small" style="color:#6f42c1;">هذا الشهر</p>
+        </div>
+         <div class="icon-box bg-purple bg-gradient" style="background-color:#6f42c1 !important;">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- حملات مكتملة -->
+    <div class="col-md-4">
+      <div class="card py-1 px-3 shadow-sm d-flex flex-row align-items-center justify-content-between gap-3">
+        
+        <div >
+          <p class="text-muted mb-1 pt-1">حملات مكتملة</p>
+          <h4 class="fw-bold text-dark">127</h4>
+          <p class="small text-warning">هذا العام</p>
+        </div>
+        <div class="icon-box bg-warning bg-gradient">
+          <i class="fa-regular fa-square-check"></i>
+        </div>
+      </div>
+    </div>
+      </div>
+ </div>
+     
+
+   
+     
+   
+ 
+
+<!--footer-->
+<footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>عن GiveHope</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> من نحن ؟</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> فريق العمل</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> الشهادات والتقارير</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> الشفافية والمصداقية</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> الشروط والسياسات</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> استقبال الشكاوي</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>روابط سريعة</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> كيفية التبرع</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> الأسئلة الشائعة</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-left"></i> شروط الاستخدام</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>اتصل بنا</h3>
+                <ul class="contact-list">
+                    <li><a href="mailto:Zaka.anb@hotmail.com"><i class="fas fa-envelope"></i></a></li>
+                    <li><a href="tel:092673570"><i class="fas fa-phone"></i></a></li>
+                    <li><a href="tel:+972592900945"><i class="fab fa-whatsapp"></i></a></li>
+                    <li><a href="https://www.facebook.com/share/1Z2HWWqSxJ/?mibextid=wwXIfr"><i class="fab fa-facebook"></i></a></li>
+                </ul>
+                <p class="contact-address"><i class="fas fa-map-marker-alt"></i> عنواننا : عنبتا - شارع السكة</p>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <p>© 2025 GiveHope. جميع الحقوق محفوظة</p>
+            <p>منصة خيرية تهدف إلى صناعة الأمل ومساعدة المحتاجين</p>
+        </div>
+    </footer>
+
+
+    
+<!-- Bootstrap JS -->
+<script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="navbar.js"></script>
+<script src="statistics.js"></script>
+
+</body>
+</html>
