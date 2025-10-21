@@ -32,7 +32,7 @@
     <main>
       <div class="hero-card">
         <h1>إخراج الزكاة</h1>
-        <a href="donate.html?type=zakat" class="btn">
+        <a href="DonateNow.html" class="btn">
           <i class="fas fa-hand-holding-usd"></i> أخرج زكاتك الآن
         </a>
       </div>
@@ -86,140 +86,8 @@
     <!-- Footer -->
     <div id="footer-placeholder"></div>
 
-    <!-- تحميل المكونات -->
-    <script>
-      function loadHTML(id, file) {
-        fetch(file)
-          .then((res) => res.text())
-          .then((html) => (document.getElementById(id).innerHTML = html))
-          .catch((err) => console.error("خطأ في تحميل", file, err));
-      }
+    <script src="zakat.js"></script>
 
-      document.addEventListener("DOMContentLoaded", () => {
-        loadHTML("navbar-placeholder", "navbar.html");
-        loadHTML("footer-placeholder", "footer.html");
-      });
-    </script>
-
-    <!-- سكريبت Navbar -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const check = setInterval(() => {
-          const toggle = document.getElementById("menuToggle");
-          const nav = document.getElementById("navLinks");
-          if (toggle && nav) {
-            clearInterval(check);
-            toggle.onclick = (e) => {
-              e.stopPropagation();
-              nav.classList.toggle("active");
-            };
-            document.onclick = (e) => {
-              if (!e.target.closest(".navbar")) {
-                nav.classList.remove("active");
-                document
-                  .querySelectorAll(".dropdown")
-                  .forEach((d) => d.classList.remove("active"));
-              }
-            };
-            nav.onclick = (e) => e.stopPropagation();
-            document.querySelectorAll(".dropdown-toggle").forEach((btn) => {
-              btn.onclick = (e) => {
-                if (window.innerWidth <= 992) {
-                  e.preventDefault();
-                  const dropdown = btn.parentElement;
-                  dropdown.classList.toggle("active");
-                  document.querySelectorAll(".dropdown").forEach((d) => {
-                    if (d !== dropdown) d.classList.remove("active");
-                  });
-                }
-              };
-            });
-            window.onresize = () => {
-              if (window.innerWidth > 992) {
-                nav.classList.remove("active");
-                document
-                  .querySelectorAll(".dropdown")
-                  .forEach((d) => d.classList.remove("active"));
-              }
-            };
-          }
-        }, 100);
-      });
-    </script>
-
-    <!-- سكريبت حساب الزكاة -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const form = document.getElementById("zakatForm");
-        const overlay = document.getElementById("overlay");
-        const popup = document.getElementById("resultPopup");
-        const currencySelect = document.getElementById("currency");
-
-        // نصاب الذهب والفضة بالشيكل
-        const GOLD_NISAB_GRAM = 85;
-        const SILVER_NISAB_GRAM = 595;
-        const GOLD_PRICE_PER_GRAM = 300; // تقديري بالشيكل
-        const SILVER_PRICE_PER_GRAM = 4; // تقديري بالشيكل
-
-        const CASH_NISAB = GOLD_NISAB_GRAM * GOLD_PRICE_PER_GRAM;
-
-        form?.addEventListener("submit", (e) => {
-          e.preventDefault();
-          const currencySymbol =
-            currencySelect.selectedOptions[0].dataset.symbol || "";
-
-          const cash = parseFloat(document.getElementById("cash").value) || 0;
-          const gold = parseFloat(document.getElementById("gold").value) || 0;
-          const silver =
-            parseFloat(document.getElementById("silver").value) || 0;
-          const investments =
-            parseFloat(document.getElementById("investments").value) || 0;
-
-          const totalAssets = cash + gold + silver + investments;
-
-          form.reset();
-
-          let resultHTML = "";
-          if (totalAssets < CASH_NISAB) {
-            // في حال لم يكن المبلغ بلغ النصاب
-            resultHTML = `
-            <h3>لا تجب عليك الزكاة</h3>
-            <p style="color: #e74c3c; margin: 1rem 0; font-size: 1.1rem;">
-              مجموع أموالك (<strong>${currencySymbol}${totalAssets.toFixed(
-              2
-            )}</strong>) 
-              أقل من نصاب الزكاة (<strong>${currencySymbol}${CASH_NISAB.toLocaleString()}</strong>).
-            </p>
-            <p>لا يُشترط إخراج زكاة حتى يبلغ المال النصاب.</p>
-          `;
-          } else {
-            // بعد حساب الزكاة تظهر رسالة انه المبلغ مناسب وخيار الدفع
-            const zakat = totalAssets * 0.025;
-            resultHTML = `
-            <h3>إجمالي الزكاة المستحقة</h3>
-            <div class="total-amount">${currencySymbol}${zakat.toFixed(2)}</div>
-            <a href="donate.html?type=zakat" class="btn" style="margin-top: 1rem; display: inline-block;">
-              <i class="fas fa-check-circle"></i> ادفع زكاتك الآن
-            </a>
-          `;
-          }
-
-          popup.innerHTML = resultHTML;
-          overlay.classList.add("show");
-          popup.classList.add("show");
-        });
-
-        overlay?.addEventListener("click", () => {
-          overlay.classList.remove("show");
-          popup.classList.remove("show");
-        });
-      });
-    </script>
-    <!-- تحديد نوع الصفحة قبل تحميل الشات بوت -->
-    <script>
-      // عيّن نوع الصفحة
-      window.pageType = "zakat";
-    </script>
     <script src="loadChatbot.js"></script>
   </body>
 </html>
