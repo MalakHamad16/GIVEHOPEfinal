@@ -272,48 +272,82 @@
 
     <!-- سكريبتات الـ Navbar -->
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const check = setInterval(() => {
-          const toggle = document.getElementById("menuToggle");
-          const nav = document.getElementById("navLinks");
-          if (toggle && nav) {
-            clearInterval(check);
-            toggle.onclick = (e) => {
-              e.stopPropagation();
-              nav.classList.toggle("active");
-            };
-            document.onclick = (e) => {
-              if (!e.target.closest(".navbar")) {
-                nav.classList.remove("active");
-                document
-                  .querySelectorAll(".dropdown")
-                  .forEach((d) => d.classList.remove("active"));
-              }
-            };
-            nav.onclick = (e) => e.stopPropagation();
-            document.querySelectorAll(".dropdown-toggle").forEach((btn) => {
-              btn.onclick = (e) => {
-                if (window.innerWidth <= 992) {
-                  e.preventDefault();
-                  const dropdown = btn.parentElement;
-                  dropdown.classList.toggle("active");
-                  document.querySelectorAll(".dropdown").forEach((d) => {
-                    if (d !== dropdown) d.classList.remove("active");
-                  });
-                }
-              };
+     // دوال تحميل HTML وتهيئة شريط التنقل (تم الإبقاء عليها كما هي)
+async function loadHTML(file, elementId) {
+    try {
+        const response = await fetch(file);
+        const data = await response.text();
+        const container = document.getElementById(elementId);
+        container.innerHTML = data;
+        
+        if (file === 'navbar.html') {
+            initNavbar();
+        }
+        
+        return true;
+    } catch (error) {
+        console.error('Error loading HTML:', error);
+        return false;
+    }
+}
+
+function initNavbar() {
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    
+    if (!menuToggle || !navLinks) return;
+    
+    menuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        navLinks.classList.toggle('active');
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.navbar')) {
+            navLinks.classList.remove('active');
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
             });
-            window.onresize = () => {
-              if (window.innerWidth > 992) {
-                nav.classList.remove("active");
-                document
-                  .querySelectorAll(".dropdown")
-                  .forEach((d) => d.classList.remove("active"));
-              }
-            };
-          }
-        }, 100);
-      });
+        }
+    });
+    
+    if (navLinks) {
+        navLinks.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+    
+    document.querySelectorAll('.dropdown-toggle').forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (window.innerWidth <= 992) {
+                e.preventDefault();
+                const dropdown = this.parentNode;
+                dropdown.classList.toggle('active');
+                
+                document.querySelectorAll('.dropdown').forEach(d => {
+                    if (d !== dropdown) {
+                        d.classList.remove('active');
+                    }
+                });
+            }
+        });
+    });
+    
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 992) {
+            if (navLinks) navLinks.classList.remove('active');
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
+            }); 
+        }
+    });
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    loadHTML('navbar.html', 'navbar-placeholder');
+    loadHTML('footer.html', 'footer-placeholder');
+});
+ 
     </script>
     <!-- تحديد نوع الصفحة قبل تحميل الشات بوت -->
     <script>
