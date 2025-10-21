@@ -39,38 +39,27 @@
       <div class="complaint-form-box">
         <h2>أرسل شكواك عبر البريد الإلكتروني</h2>
         <form id="complaintForm">
-          <div class="form-group">
-            <label for="name">الاسم الكامل</label>
-            <input
-              type="text"
-              id="name"
-              required
-              placeholder="أدخل اسمك الكامل"
-            />
-          </div>
-          <div class="form-group">
-            <label for="email">البريد الإلكتروني</label>
-            <input
-              type="email"
-              id="email"
-              required
-              placeholder="example@email.com"
-            />
-          </div>
-          <div class="form-group">
-            <label for="message">نص الشكوى</label>
-            <textarea
-              id="message"
-              placeholder="اكتب تفاصيل شكوتك هنا..."
-              required
-            ></textarea>
-          </div>
+          <div class="form-row">
+  <div class="form-group">
+    <label for="name">الاسم الكامل</label>
+    <input type="text" id="name" required placeholder="أدخل اسمك الكامل" />
+  </div>
+  <div class="form-group">
+    <label for="email">البريد الإلكتروني</label>
+    <input type="email" id="email" required placeholder="example@email.com" />
+  </div>
+</div>
+
+<div class="form-group">
+  <label for="message">نص الشكوى</label>
+  <textarea id="message" placeholder="اكتب تفاصيل شكوتك هنا..." required></textarea>
+</div>
+
           <button type="submit" class="btn">
             <i class="fas fa-paper-plane"></i> إرسال الشكوى
           </button>
           <div id="successMessage" class="success-message">
             <i class="fas fa-check-circle"></i> تم إرسال شكوتك بنجاح!
-            <button id="closeSuccess" class="close-btn">✖</button>
           </div>
         </form>
       </div>
@@ -83,90 +72,11 @@
     <!-- Footer -->
     <div id="footer-placeholder"></div>
 
-    <script>
-      function loadHTML(id, file) {
-        fetch(file)
-          .then((res) => res.text())
-          .then((html) => (document.getElementById(id).innerHTML = html))
-          .catch((err) => console.error("خطأ في تحميل", file, err));
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        loadHTML("navbar-placeholder", "navbar.html");
-        loadHTML("footer-placeholder", "footer.html");
-      });
-    </script>
-
-    <!-- سكريبتات الـ Navbar  -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const check = setInterval(() => {
-          const toggle = document.getElementById("menuToggle");
-          const nav = document.getElementById("navLinks");
-          if (toggle && nav) {
-            clearInterval(check);
-            toggle.onclick = (e) => {
-              e.stopPropagation();
-              nav.classList.toggle("active");
-            };
-            document.onclick = (e) => {
-              if (!e.target.closest(".navbar")) {
-                nav.classList.remove("active");
-                document
-                  .querySelectorAll(".dropdown")
-                  .forEach((d) => d.classList.remove("active"));
-              }
-            };
-            nav.onclick = (e) => e.stopPropagation();
-            document.querySelectorAll(".dropdown-toggle").forEach((btn) => {
-              btn.onclick = (e) => {
-                if (window.innerWidth <= 992) {
-                  e.preventDefault();
-                  const dropdown = btn.parentElement;
-                  dropdown.classList.toggle("active");
-                  document.querySelectorAll(".dropdown").forEach((d) => {
-                    if (d !== dropdown) d.classList.remove("active");
-                  });
-                }
-              };
-            });
-            window.onresize = () => {
-              if (window.innerWidth > 992) {
-                nav.classList.remove("active");
-                document
-                  .querySelectorAll(".dropdown")
-                  .forEach((d) => d.classList.remove("active"));
-              }
-            };
-          }
-        }, 100);
-      });
-    </script>
-
-    <!-- وظيفة النموذج -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const form = document.getElementById("complaintForm");
-        const successMsg = document.getElementById("successMessage");
-        const closeBtn = document.getElementById("closeSuccess");
-
-        form.onsubmit = (e) => {
-          e.preventDefault();
-          form.reset();
-          successMsg.classList.add("show");
-          successMsg.scrollIntoView({ behavior: "smooth", block: "center" });
-        };
-
-        closeBtn.onclick = () => {
-          successMsg.classList.remove("show");
-        };
-      });
-    </script>
-
     <!-- تحديد نوع الصفحة قبل تحميل الشات بوت -->
     <script>
       window.pageType = "complaints";
     </script>
     <script src="loadChatbot.js"></script>
+    <script src="complaints.js"></script>
   </body>
 </html>
