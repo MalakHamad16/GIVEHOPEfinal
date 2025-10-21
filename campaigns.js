@@ -1,5 +1,5 @@
 // مؤقت: تحديد هل المستخدم إداري أم لا
-const isAdmin = false; // ضع true إذا كان أدمن، false إذا مستخدم عادي
+const isAdmin = true; // ضع true إذا كان أدمن، false إذا مستخدم عادي
 
 // بيانات تجريبية للحملات
 const campaignsData = [
@@ -11,7 +11,23 @@ const campaignsData = [
     currency: "₪",
     startDate: "2025-10-01",
     endDate: "2025-11-30",
-    description: "كن عوناً في توفير السقيا والمياه العذبة في المناطق الأشد احتياجاً",
+    description:
+      "كن عوناً في توفير السقيا والمياه العذبة في المناطق الأشد احتياجاً",
+    progress: 95,
+    image: "images/water.jpg",
+    status: "active",
+    duration: "2 شهر",
+  },
+  {
+    id: 1,
+    campaignCode: "A001",
+    title: "سقيا ماء",
+    goal: 20000,
+    currency: "₪",
+    startDate: "2025-10-01",
+    endDate: "2025-11-30",
+    description:
+      "كن عوناً في توفير السقيا والمياه العذبة في المناطق الأشد احتياجاً",
     progress: 95,
     image: "images/water.jpg",
     status: "active",
@@ -59,6 +75,21 @@ const campaignsData = [
     status: "ended",
     duration: "20 يوم",
   },
+  {
+    id: 5,
+    campaignCode: "A005",
+    title: "إفطار صائم",
+    goal: 12000,
+    currency: "₪",
+    startDate: "2025-12-01",
+    endDate: "2026-01-01",
+    description:
+      "حملة لتجهيز وجبات إفطار يومية للصائمين خلال شهر رمضان المبارك.",
+    progress: 0,
+    image: "images/iftar.jpg",
+    status: "scheduled",
+    duration: "1 شهر",
+  },
 ];
 
 // عند تحميل الصفحة
@@ -91,8 +122,11 @@ function getStatusInfo(status) {
       return { text: "مكتملة بنجاح", color: "#3b82f6" };
     case "ended":
       return { text: "منتهية", color: "#ef4444" };
+    case "scheduled":
+      return { text: "مجدولة", color: "#90909bff" };
+
     default:
-      return { text: "غير معروفة", color: "#94a3b8" };
+      return { text: "غير معروفة", color: "#5e4668ff" };
   }
 }
 
@@ -117,7 +151,9 @@ function createCampaignCard(camp) {
   card.innerHTML = `
     <div class="campaign-image">
       <img src="${camp.image}" alt="${camp.title}">
-      <span class="status-badge" style="background:${statusInfo.color}; color:${statusInfo.textColor || "white"}">
+      <span class="status-badge" style="background:${statusInfo.color}; color:${
+    statusInfo.textColor || "white"
+  }">
         ${statusInfo.text}
       </span>
     </div>
@@ -131,7 +167,9 @@ function createCampaignCard(camp) {
         <div class="progress-fill" style="width:${camp.progress}%"></div>
       </div>
       <div class="progress-text">
-        <span>${((camp.goal * camp.progress) / 100).toLocaleString()}${camp.currency}</span>
+        <span>${((camp.goal * camp.progress) / 100).toLocaleString()}${
+    camp.currency
+  }</span>
         <span>من ${camp.goal.toLocaleString()}${camp.currency}</span>
       </div>
       <div class="card-buttons">
@@ -157,15 +195,29 @@ function createCampaignCard(camp) {
 
 // عرض الحملات
 function renderCampaigns(filterStatus = "all") {
-  const container = document.getElementById("campaignsContainer");
-  container.innerHTML = "";
+  const activeContainer = document.getElementById("campaignsContainer");
+  const completedContainer = document.getElementById("completedCampaigns");
+  const scheduledContainer = document.getElementById("scheduledCampaigns");
+
+  activeContainer.innerHTML = "";
+  completedContainer.innerHTML = "";
+  scheduledContainer.innerHTML = "";
 
   const filtered =
     filterStatus === "all"
       ? campaignsData
       : campaignsData.filter((c) => c.status === filterStatus);
 
-  filtered.forEach((camp) => container.appendChild(createCampaignCard(camp)));
+  filtered.forEach((camp) => {
+    const card = createCampaignCard(camp);
+    if (camp.status === "completed" || camp.status === "ended") {
+      completedContainer.appendChild(card);
+    } else if (camp.status === "scheduled") {
+      scheduledContainer.appendChild(card);
+    } else {
+      activeContainer.appendChild(card);
+    }
+  });
 }
 
 // شريط الفلترة
@@ -177,6 +229,7 @@ function renderFilterBar() {
     { text: "النشطة", status: "active" },
     { text: "المعلقة", status: "paused" },
     { text: "المنتهية", status: "ended" },
+    { text: "المجدولة", status: "scheduled" },
     { text: "المكتملة بنجاح", status: "completed" },
   ];
 
@@ -186,7 +239,9 @@ function renderFilterBar() {
     buttonEl.dataset.status = btn.status;
     if (btn.status === "all") buttonEl.classList.add("active");
     buttonEl.addEventListener("click", () => {
-      document.querySelectorAll(".filter-bar button").forEach((b) => b.classList.remove("active"));
+      document
+        .querySelectorAll(".filter-bar button")
+        .forEach((b) => b.classList.remove("active"));
       buttonEl.classList.add("active");
       renderCampaigns(btn.status);
     });
@@ -208,10 +263,17 @@ function showDetails(id) {
   document.getElementById("modalId").textContent = camp.campaignCode;
   document.getElementById("modalStart").textContent = camp.startDate;
   document.getElementById("modalEnd").textContent = camp.endDate;
-  document.getElementById("modalGoal").textContent = `${camp.goal.toLocaleString()}${camp.currency}`;
-  document.getElementById("modalRaised").textContent = `${((camp.goal * camp.progress)/100).toLocaleString()}${camp.currency}`;
+  document.getElementById(
+    "modalGoal"
+  ).textContent = `${camp.goal.toLocaleString()}${camp.currency}`;
+  document.getElementById("modalRaised").textContent = `${(
+    (camp.goal * camp.progress) /
+    100
+  ).toLocaleString()}${camp.currency}`;
   document.getElementById("modalDesc").textContent = camp.description;
-  document.querySelector(".modal-info").style.borderLeft = `6px solid ${statusInfo.color}`;
+  document.querySelector(
+    ".modal-info"
+  ).style.borderLeft = `6px solid ${statusInfo.color}`;
 
   // زر التبرع يظهر فقط للمستخدم
   const modalDonateBtn = document.querySelector(".modal-donate-btn");
@@ -240,22 +302,26 @@ function deleteCampaign(id) {
 
 // مشاركة الحملة
 function shareCampaign(id) {
-  const camp = campaignsData.find(c => c.id === id);
+  const camp = campaignsData.find((c) => c.id === id);
   if (!camp) return;
 
   const url = `${window.location.origin}/donate.html?type=donation&campaign=${id}`;
 
-  const shareModal = document.createElement('div');
-  shareModal.className = 'modal-overlay';
+  const shareModal = document.createElement("div");
+  shareModal.className = "modal-overlay";
   shareModal.innerHTML = `
     <div class="modal-content">
       <button class="modal-close">&times;</button>
       <h3>مشاركة الحملة: ${camp.title}</h3>
       <div class="share-icons">
-        <a href="https://wa.me/?text=${encodeURIComponent(url)}" target="_blank">
+        <a href="https://wa.me/?text=${encodeURIComponent(
+          url
+        )}" target="_blank">
           <i class="fab fa-whatsapp"></i>
         </a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          url
+        )}" target="_blank">
           <i class="fab fa-facebook"></i>
         </a>
         <button onclick="navigator.clipboard.writeText('${url}'); alert('تم نسخ الرابط');">
@@ -265,12 +331,12 @@ function shareCampaign(id) {
     </div>
   `;
   document.body.appendChild(shareModal);
-  shareModal.style.display = 'flex';
+  shareModal.style.display = "flex";
 
   shareModal.querySelector(".modal-close").addEventListener("click", () => {
     shareModal.remove();
   });
-  shareModal.addEventListener("click", e => {
+  shareModal.addEventListener("click", (e) => {
     if (e.target === shareModal) shareModal.remove();
   });
 }
