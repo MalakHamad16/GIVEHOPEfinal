@@ -206,3 +206,20 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sponsorLink").style.pointerEvents = "none";
   }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  // اقرأ معرّف الحالة من الرابط (مثل ?id=ORP001)
+  const urlParams = new URLSearchParams(window.location.search);
+  const caseId = urlParams.get('id');
+
+  if (caseId) {
+    // عيّن الرابط الصحيح مع معرّف الحالة
+    document.getElementById('sponsorLink').href = `DonateNow.html?type=sponsor&id=${caseId}`;
+  } else {
+    // إذا ما في ID، عطّل الزر
+    const link = document.getElementById('sponsorLink');
+    link.style.opacity = '0.5';
+    link.style.pointerEvents = 'none';
+    link.title = 'لا يمكن الكفالة - معرف الحالة غير متوفر';
+  }
+});

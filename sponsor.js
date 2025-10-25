@@ -119,7 +119,7 @@ function loadCases(filter = "all") {
   ${
     caseItem.isSponsored
       ? '<a href="#" class="btn btn-primary btn-sm disabled" style="pointer-events: none; opacity: 0.6;">اكفل الآن</a>'
-      : `<a href="donate.html?type=sponsor&id=${caseItem.id}" class="btn btn-primary btn-sm">اكفل الآن</a>`
+      : `<a href="DonateNow.html?type=sponsor&id=${caseItem.id}" class="btn btn-primary btn-sm">اكفل الآن</a>`
   }
 </div>
         </div>

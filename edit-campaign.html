@@ -1,3 +1,4 @@
+<!--edit-campaign.html-->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
@@ -70,42 +71,25 @@
             <input type="text" id="calculatedDuration" readonly />
           </div>
 
-         <!-- الحالة -->
-<div class="form-group">
-  <label for="status">حالة الحملة</label>
-  <input type="text" id="status" readonly style="padding:8px;border-radius:5px;border:1px solid #ccc;width:100%;" />
-</div>
+          <!-- الحالة (عرض فقط) -->
+          <div class="form-group">
+            <label for="statusDisplay">حالة الحملة</label>
+            <input type="text" id="statusDisplay" readonly style="padding:8px;border-radius:5px;border:1px solid #ccc;width:100%;" />
+          </div>
 
-<!-- سؤال تعليق الحملة  -->
-<div class="form-group" style="display:flex; align-items:center; gap:15px; margin-top:10px;">
-  <label style="margin:0; font-weight:600;">هل تريد تعليق الحملة مؤقتًا؟</label>
-  <div style="display:flex; gap:10px;">
-    <button type="button" id="pauseYes" style="
-        background-color: #4ecdc4; 
-        color: white;
-        border:none;
-        padding:6px 16px;
-        border-radius:5px;
-        cursor:pointer;
-        font-weight:600;
-        transition: 0.2s;
-    " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">نعم</button>
+          <!-- سؤال تعليق الحملة -->
+          <div class="form-group" style="display:flex; align-items:center; gap:15px; margin-top:10px;">
+            <label style="margin:0; font-weight:600;">هل تريد تعليق الحملة مؤقتًا؟</label>
+            <div style="display:flex; gap:10px;">
+              <button type="button" id="pauseYes" class="pause-btn" data-value="true"
+                style="background-color: #f59e0b; color: white; border:none; padding:6px 16px; border-radius:5px; cursor:pointer; font-weight:600; transition: 0.2s;"
+                onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">نعم</button>
 
-    <button type="button" id="pauseNo" style="
-        background-color: #ff6b6b; 
-        color: white;
-        border:none;
-        padding:6px 16px;
-        border-radius:5px;
-        cursor:pointer;
-        font-weight:600;
-        transition: 0.2s;
-    " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">لا</button>
-  </div>
-</div>
-
-
-
+              <button type="button" id="pauseNo" class="pause-btn" data-value="false"
+                style="background-color: #4ecdc4; color: white; border:none; padding:6px 16px; border-radius:5px; cursor:pointer; font-weight:600; transition: 0.2s;"
+                onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">لا</button>
+            </div>
+          </div>
 
           <!-- الوصف -->
           <div class="form-group">

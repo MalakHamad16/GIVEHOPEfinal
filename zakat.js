@@ -1,3 +1,5 @@
+// zakat.js
+
 // دوال تحميل HTML وتهيئة شريط التنقل
 async function loadHTML(file, elementId) {
   try {
@@ -65,58 +67,87 @@ function initNavbar() {
   });
 }
 
-window.addEventListener("DOMContentLoaded", function () {
-  loadHTML("navbar.html", "navbar-placeholder");
-  loadHTML("footer.html", "footer-placeholder");
-});
+// متغير لتخزين أسعار الزكاة
+let zakatRates = null;
+
+// جلب أسعار الذهب والفضة من الباك-إند
+async function fetchZakatRates() {
+  try {
+    const res = await fetch('/api/zakat/rates');
+    if (res.ok) {
+      zakatRates = await res.json();
+    } else {
+      // استخدام قيم افتراضية في حال الفشل
+      zakatRates = { goldPerGram: 300, silverPerGram: 4, baseCurrency: 'ILS' };
+    }
+  } catch (error) {
+    console.warn('فشل تحميل أسعار الزكاة، استخدام القيم الافتراضية');
+    zakatRates = { goldPerGram: 300, silverPerGram: 4, baseCurrency: 'ILS' };
+  }
+}
+
+// تحويل رمز العملة
+function getCurrencySymbol(code) {
+  const symbols = { ILS: '₪', USD: '$', JOD: 'د.أ', AED: 'د.إ' };
+  return symbols[code] || '₪';
+}
 
 // سكريبت حساب الزكاة
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  // تحميل navbar وfooter
+  loadHTML("navbar.html", "navbar-placeholder");
+  loadHTML("footer.html", "footer-placeholder");
+
+  // جلب أسعار الزكاة
+  await fetchZakatRates();
+
   const form = document.getElementById("zakatForm");
   const overlay = document.getElementById("overlay");
   const popup = document.getElementById("resultPopup");
   const currencySelect = document.getElementById("currency");
 
-  // نصاب الذهب والفضة بالشيكل (أسعار ثابتة اليوم)
-  const GOLD_NISAB_GRAM = 85;
-  const SILVER_NISAB_GRAM = 595;
-  const GOLD_PRICE_PER_GRAM = 300;
-  const SILVER_PRICE_PER_GRAM = 4;
-
-  const CASH_NISAB = GOLD_NISAB_GRAM * GOLD_PRICE_PER_GRAM;
-
   form?.addEventListener("submit", (e) => {
     e.preventDefault();
-    const currencySymbol =
-      currencySelect.selectedOptions[0].dataset.symbol || "";
+
+    if (!zakatRates) {
+      alert('لم يتم تحميل أسعار الزكاة بعد. يرجى المحاولة لاحقًا.');
+      return;
+    }
+
+    const selectedCurrency = currencySelect.value;
+    const currencySymbol = getCurrencySymbol(selectedCurrency);
 
     const cash = parseFloat(document.getElementById("cash").value) || 0;
-    const gold = parseFloat(document.getElementById("gold").value) || 0;
-    const silver = parseFloat(document.getElementById("silver").value) || 0;
-    const investments =
-      parseFloat(document.getElementById("investments").value) || 0;
+    const goldGrams = parseFloat(document.getElementById("gold").value) || 0;
+    const silverGrams = parseFloat(document.getElementById("silver").value) || 0;
+    const investments = parseFloat(document.getElementById("investments").value) || 0;
 
-    const totalAssets =
-      cash + gold * GOLD_PRICE_PER_GRAM + silver * SILVER_PRICE_PER_GRAM + investments;
+    // حساب القيم بالعملة الأساسية (ILS)
+    const goldValue = goldGrams * zakatRates.goldPerGram;
+    const silverValue = silverGrams * zakatRates.silverPerGram;
+    const totalInBase = cash + goldValue + silverValue + investments;
 
-    form.reset();
+    // النصاب = 85 جرام ذهب
+    const nisab = 85 * zakatRates.goldPerGram;
 
     let resultHTML = "";
-    if (totalAssets < CASH_NISAB) {
+
+    if (totalInBase < nisab) {
       resultHTML = `
         <h3>لا تجب عليك الزكاة</h3>
         <p style="color: #e74c3c; margin: 1rem 0; font-size: 1.1rem;">
-          مجموع أموالك (<strong>${currencySymbol}${totalAssets.toFixed(2)}</strong>) 
-          أقل من نصاب الزكاة (<strong>${currencySymbol}${CASH_NISAB.toLocaleString()}</strong>).
+          مجموع أموالك (<strong>${currencySymbol}${totalInBase.toFixed(2)}</strong>) 
+          أقل من نصاب الزكاة (<strong>${currencySymbol}${nisab.toLocaleString()}</strong>).
         </p>
         <p>لا يُشترط إخراج زكاة حتى يبلغ المال النصاب.</p>
       `;
     } else {
-      const zakat = totalAssets * 0.025;
+      const zakatAmount = totalInBase * 0.025;
       resultHTML = `
         <h3>إجمالي الزكاة المستحقة</h3>
-        <div class="total-amount">${currencySymbol}${zakat.toFixed(2)}</div>
-        <a href="DonateNow.html?type=zakat" class="btn" style="margin-top: 1rem; display: inline-block;">
+        <p>المبلغ الذي أدخلته: <strong>${currencySymbol}${totalInBase.toFixed(2)}</strong></p>
+        <p>مبلغ الزكاة (2.5%): <strong>${currencySymbol}${zakatAmount.toFixed(2)}</strong></p>
+        <a href="DonateNow.html?type=zakat&amount=${zakatAmount.toFixed(2)}" class="btn" style="margin-top: 1rem; display: inline-block;">
           <i class="fas fa-check-circle"></i> ادفع زكاتك الآن
         </a>
       `;
@@ -125,6 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
     popup.innerHTML = resultHTML;
     overlay.classList.add("show");
     popup.classList.add("show");
+
+    // إعادة تعيين النموذج بعد الحساب
+    form.reset();
   });
 
   overlay?.addEventListener("click", () => {
