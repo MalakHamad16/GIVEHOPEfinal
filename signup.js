@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const successModal = new bootstrap.Modal(document.getElementById('successModal'));
     const successMessage = document.getElementById('successMessage');
 
+    // API Configuration
+    const API_URL = 'http://localhost:5000/api/auth/signup';
+
     // Arabic messages
     const messages = {
         passwordStrength: {
@@ -34,7 +37,12 @@ document.addEventListener('DOMContentLoaded', function() {
             createAccount: 'إنشاء حساب'
         },
         success: {
-            signUp: 'أهلاً {name}! تم إنشاء حسابك بنجاح. تم إرسال رسالة تأكيد إلى {email}'
+            signUp: 'أهلاً {name}! تم إنشاء حسابك بنجاح'
+        },
+        error: {
+            userExists: 'يوجد مستخدم مسجل بهذا البريد الإلكتروني بالفعل',
+            serverError: 'حدث خطأ في الخادم. يرجى المحاولة مرة أخرى',
+            networkError: 'خطأ في الاتصال بالخادم. تأكد من تشغيل السيرفر'
         },
         validation: {
             emailInvalid: 'يرجى إدخال عنوان بريد إلكتروني صحيح',
@@ -224,41 +232,107 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Show error message
+    function showError(message) {
+        // Create alert element if it doesn't exist
+        let alertDiv = document.querySelector('.alert-danger');
+        if (!alertDiv) {
+            alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.setAttribute('role', 'alert');
+            registerForm.insertBefore(alertDiv, registerForm.firstChild);
+        }
+        
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        // Auto dismiss after 5 seconds
+        setTimeout(() => {
+            if (alertDiv && alertDiv.parentElement) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+
     // Form submission handler
-    registerForm.addEventListener('submit', function(e) {
+    registerForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         if (validateForm(this)) {
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             
+            // Get form values
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            
             // Show loading state
             submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm ms-2"></span>${messages.buttons.creatingAccount}`;
             submitBtn.disabled = true;
             
-            // Simulate API call
-            setTimeout(() => {
-                const firstName = document.getElementById('firstName').value;
-                const email = document.getElementById('registerEmail').value;
-                successMessage.textContent = messages.success.signUp
-                    .replace('{name}', firstName)
-                    .replace('{email}', email);
-                successModal.show();
-                
+            try {
+                // Make API call
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Store token and user info
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Show success message
+                    successMessage.textContent = messages.success.signUp.replace('{name}', firstName);
+                    successModal.show();
+                    
+                    // Clear form
+                    this.reset();
+                    clearValidation(this);
+                    removePasswordStrengthIndicator();
+                    
+                    // Redirect to login page after modal is closed
+                    successModal._element.addEventListener('hidden.bs.modal', function() {
+                        window.location.href = 'login.html';
+                    }, { once: true });
+                } else {
+                    // Handle error response
+                    let errorMessage = messages.error.serverError;
+                    
+                    if (data.message) {
+                        if (data.message.includes('already exists')) {
+                            errorMessage = messages.error.userExists;
+                        } else {
+                            errorMessage = data.message;
+                        }
+                    } else if (data.errors && data.errors.length > 0) {
+                        errorMessage = data.errors.map(err => err.msg).join(', ');
+                    }
+                    
+                    showError(errorMessage);
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                showError(messages.error.networkError);
+            } finally {
                 // Reset button
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
-                
-                // Clear form
-                this.reset();
-                clearValidation(this);
-                removePasswordStrengthIndicator();
-                
-                // Redirect to login page after modal is closed
-                successModal._element.addEventListener('hidden.bs.modal', function() {
-                    window.location.href = 'login.html';
-                }, { once: true });
-            }, 2000);
+            }
         }
     });
 
@@ -287,6 +361,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Remove invalid class when user starts typing
             if (this.classList.contains('is-invalid')) {
                 this.classList.remove('is-invalid');
+            }
+            
+            // Remove any error alerts
+            const alertDiv = document.querySelector('.alert-danger');
+            if (alertDiv) {
+                alertDiv.remove();
             }
         });
     });

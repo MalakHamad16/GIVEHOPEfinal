@@ -27,7 +27,7 @@
                     <div class="user-avatar">م</div>
                     <div>
                         <div>أهلاً بك، محمد</div>
-                        <div style="font-size: 14px; opacity: 0.8;">متبرع منذ 2022</div>
+                        <div style="font-size: 14px; opacity: 0.8;">متبرع منذ <span id="join-year"></span></div>
                     </div>
                 </div>
             </div>
@@ -250,44 +250,35 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="form-group">
-                        <label for="fullName">الاسم الكامل</label>
-                        <input type="text" id="fullName" class="form-control" value="محمد أحمد">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="firstName">الاسم الأول</label>
+                                <input type="text" id="firstName" class="form-control" placeholder="أدخل الاسم الأول">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="lastName">اسم العائلة</label>
+                                <input type="text" id="lastName" class="form-control" placeholder="أدخل اسم العائلة">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label for="email">البريد الإلكتروني</label>
-                        <input type="email" id="email" class="form-control" value="mohamed@example.com">
+                        <input type="email" id="email" class="form-control" value="mohamed@example.com" disabled>
+                        <small class="form-text text-muted">لا يمكن تعديل البريد الإلكتروني</small>
                     </div>
 
                     <div class="form-group">
                         <label for="phone">رقم الهاتف</label>
-                        <input type="tel" id="phone" class="form-control" value="+966500000000">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">كلمة المرور الحالية</label>
-                        <input type="password" id="currentPassword" class="form-control"
-                            placeholder="أدخل كلمة المرور الحالية">
-                    </div>
-
-                    <div class="form-group" id="newPasswordGroup" style="display: none;">
-                        <label for="newPassword">كلمة المرور الجديدة</label>
-                        <input type="password" id="newPassword" class="form-control"
-                            placeholder="أدخل كلمة المرور الجديدة">
-                    </div>
-
-                    <div class="form-group" id="confirmPasswordGroup" style="display: none;">
-                        <label for="confirmPassword">تأكيد كلمة المرور الجديدة</label>
-                        <input type="password" id="confirmPassword" class="form-control"
-                            placeholder="أكد كلمة المرور الجديدة">
+                        <input type="tel" id="phone" class="form-control" placeholder="أدخل رقم الهاتف">
                     </div>
 
                     <div style="display: flex; gap: 10px; margin-top: 20px;">
                         <button class="btn btn-success" id="saveChanges">حفظ التغييرات</button>
                         <button class="btn" style="background: #f8f9fa;" id="cancelChanges">إلغاء</button>
-                        <button class="btn" style="background: #fff3cd; color: #856404;" id="changePasswordBtn">تغيير
-                            كلمة المرور</button>
                     </div>
                 </div>
             </div>
@@ -339,6 +330,7 @@
     <div id="footer-container"></div>
     <script src="Thedonor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/script.js"></script>
 
 </body>
 

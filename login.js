@@ -1,14 +1,17 @@
 // JavaScript for Arabic Login Page
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Get form elements
     const loginForm = document.getElementById('loginForm');
     const toggleLoginPassword = document.getElementById('toggleLoginPassword');
     const loginPassword = document.getElementById('loginPassword');
-    
+
     // Success modal
     const successModal = new bootstrap.Modal(document.getElementById('successModal'));
     const successMessage = document.getElementById('successMessage');
+
+    // API Configuration
+    const API_URL = 'http://localhost:5000/api/auth/login';
 
     // Arabic messages
     const messages = {
@@ -17,7 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
             signIn: 'تسجيل الدخول'
         },
         success: {
-            signIn: 'أهلاً بعودتك! تم تسجيل الدخول بنجاح باستخدام'
+            signIn: 'أهلاً بعودتك! تم تسجيل الدخول بنجاح'
+        },
+        error: {
+            invalidCredentials: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+            serverError: 'حدث خطأ في الخادم. يرجى المحاولة مرة أخرى',
+            networkError: 'خطأ في الاتصال بالخادم. تأكد من تشغيل السيرفر'
         },
         validation: {
             emailInvalid: 'يرجى إدخال عنوان بريد إلكتروني صحيح',
@@ -26,10 +34,10 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Password visibility toggle functionality
-    toggleLoginPassword.addEventListener('click', function() {
+    toggleLoginPassword.addEventListener('click', function () {
         const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
         loginPassword.setAttribute('type', type);
-        
+
         const icon = this.querySelector('i');
         if (type === 'text') {
             icon.classList.remove('fa-eye');
@@ -49,13 +57,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function validateForm(form) {
         let isValid = true;
         const inputs = form.querySelectorAll('input[required]');
-        
+
         inputs.forEach(input => {
             const value = input.value.trim();
-            
+
             // Remove previous validation classes
             input.classList.remove('is-valid', 'is-invalid');
-            
+
             if (value === '') {
                 input.classList.add('is-invalid');
                 isValid = false;
@@ -66,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.classList.add('is-valid');
             }
         });
-        
+
         return isValid;
     }
 
@@ -77,39 +85,119 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Show error message
+    function showError(message) {
+        // Create alert element if it doesn't exist
+        let alertDiv = document.querySelector('.alert-danger');
+        if (!alertDiv) {
+            alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.setAttribute('role', 'alert');
+            loginForm.insertBefore(alertDiv, loginForm.firstChild);
+        }
+
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        // Auto dismiss after 5 seconds
+        setTimeout(() => {
+            if (alertDiv && alertDiv.parentElement) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+
     // Form submission handler
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        
+
         if (validateForm(this)) {
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
-            
+
+            // Get form values
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
             // Show loading state
             submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm ms-2"></span>${messages.buttons.signingIn}`;
             submitBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                const email = document.getElementById('loginEmail').value;
-                successMessage.textContent = `${messages.success.signIn} ${email}`;
-                successModal.show();
-                
+
+            try {
+                // Make API call
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Store token and user info
+                    if (rememberMe) {
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                    } else {
+                        sessionStorage.setItem('token', data.token);
+                        sessionStorage.setItem('user', JSON.stringify(data.user));
+                    }
+
+                    // Show success message
+                    successMessage.textContent = messages.success.signIn;
+                    successModal.show();
+
+                    // Clear form
+                    this.reset();
+                    clearValidation(this);
+
+                    // Redirect after modal
+                    setTimeout(() => {
+                        if (data.user.type === 'needy') {
+                            window.location.href = 'donation-type-selection.html';
+                        } else {
+                            window.location.href = 'Thedonor.html';
+                        }
+                    }, 1500);
+                } else {
+                    // Handle error response
+                    let errorMessage = messages.error.invalidCredentials;
+
+                    if (data.message) {
+                        if (data.message.includes('Invalid credentials')) {
+                            errorMessage = messages.error.invalidCredentials;
+                        } else {
+                            errorMessage = data.message;
+                        }
+                    } else if (data.errors && data.errors.length > 0) {
+                        errorMessage = data.errors.map(err => err.msg).join(', ');
+                    }
+
+                    showError(errorMessage);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError(messages.error.networkError);
+            } finally {
                 // Reset button
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
-                
-                // Clear form
-                this.reset();
-                clearValidation(this);
-            }, 2000);
+            }
         }
     });
 
     // Real-time validation for better UX
     const allInputs = document.querySelectorAll('input');
     allInputs.forEach(input => {
-        input.addEventListener('blur', function() {
+        input.addEventListener('blur', function () {
             if (this.value.trim() !== '') {
                 if (this.type === 'email' && !validateEmail(this.value)) {
                     this.classList.add('is-invalid');
@@ -120,11 +208,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-        
-        input.addEventListener('input', function() {
+
+        input.addEventListener('input', function () {
             // Remove invalid class when user starts typing
             if (this.classList.contains('is-invalid')) {
                 this.classList.remove('is-invalid');
+            }
+
+            // Remove any error alerts
+            const alertDiv = document.querySelector('.alert-danger');
+            if (alertDiv) {
+                alertDiv.remove();
             }
         });
     });
@@ -132,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // RTL-specific enhancements
     const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
     inputs.forEach(input => {
-        input.addEventListener('focus', function() {
+        input.addEventListener('focus', function () {
             // Ensure cursor starts at the right position for RTL
             setTimeout(() => {
                 if (this.value === '') {
@@ -140,8 +234,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }, 10);
         });
-        
-        input.addEventListener('input', function() {
+
+        input.addEventListener('input', function () {
             // Maintain RTL alignment while typing
             this.style.textAlign = 'right';
         });
@@ -159,11 +253,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check for auto-filled inputs after a short delay
     setTimeout(checkAutoFill, 500);
-    
+
     // Also check when the page becomes visible (user switches tabs)
-    document.addEventListener('visibilitychange', function() {
+    document.addEventListener('visibilitychange', function () {
         if (!document.hidden) {
             setTimeout(checkAutoFill, 100);
         }
     });
+
+    // Check if user is already logged in
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (token) {
+        window.location.href = 'Thedonor.html';
+    }
 });

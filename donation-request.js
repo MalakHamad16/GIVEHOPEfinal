@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const successModal = new bootstrap.Modal(document.getElementById('successModal'));
     const successMessage = document.getElementById('successMessage');
 
+    // API Configuration
+    const API_URL = 'http://localhost:5000/api/donation-requests';
+
     // Progress steps
     const step2 = document.getElementById('step2');
     const step3 = document.getElementById('step3');
@@ -816,41 +819,97 @@ document.addEventListener('DOMContentLoaded', function() {
         return isValid;
     }
 
+    // Collect dynamic fields data
+    function collectDynamicFields() {
+        const dynamicFields = {};
+        const dynamicInputs = dynamicFormContent.querySelectorAll('input, select, textarea');
+        
+        dynamicInputs.forEach(input => {
+            if (input.id && !input.classList.contains('document-upload')) {
+                dynamicFields[input.id] = input.value;
+            }
+        });
+        
+        return dynamicFields;
+    }
+
     // Donation request form submission handler
-    donationRequestForm.addEventListener('submit', function(e) {
+    donationRequestForm.addEventListener('submit', async function(e) {
         e.preventDefault();
+        console.log('Form submitted');
         
         if (validateDonationForm(this)) {
+            console.log('Form validation passed');
             updateProgressSteps(3);
             
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             
+            // Collect form data
+            const requestData = {
+                requestType: document.getElementById('requestType').value,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                idNumber: document.getElementById('idNumber').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                email: document.getElementById('email').value,
+                city: document.getElementById('city').value,
+                urgencyLevel: document.getElementById('urgencyLevel').value,
+                additionalNotes: document.getElementById('additionalNotes').value || '',
+                dynamicFields: collectDynamicFields()
+            };
+            
             // Show loading state
             submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm ms-2"></span>جاري تقديم الطلب...`;
             submitBtn.disabled = true;
             
-            // Simulate API call
-            setTimeout(() => {
-                const email = document.getElementById('email').value;
-                successMessage.textContent = messages.success.donationRequest.replace('{email}', email);
-                successModal.show();
-                
+            try {
+                // Make API call
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Show success message
+                    successMessage.textContent = messages.success.donationRequest.replace('{email}', requestData.email);
+                    successModal.show();
+                    
+                    // Clear form
+                    this.reset();
+                    dynamicFormSection.classList.add('d-none');
+                    dynamicFormContent.innerHTML = '';
+                    updateProgressSteps(1);
+                    
+                    // Redirect to main page after modal is closed
+                    successModal._element.addEventListener('hidden.bs.modal', function() {
+                        window.location.href = 'HomePage.html';
+                    }, { once: true });
+                } else {
+                    // Handle error response
+                    let errorMessage = 'حدث خطأ أثناء تقديم الطلب. يرجى المحاولة مرة أخرى.';
+                    
+                    if (data.errors && data.errors.length > 0) {
+                        errorMessage = data.errors.map(err => err.msg).join(', ');
+                    } else if (data.message) {
+                        errorMessage = data.message;
+                    }
+                    
+                    alert(errorMessage);
+                }
+            } catch (error) {
+                console.error('Donation request error:', error);
+                alert('حدث خطأ في الاتصال بالخادم. يرجى التأكد من تشغيل السيرفر والمحاولة مرة أخرى.');
+            } finally {
                 // Reset button
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
-                
-                // Clear form
-                this.reset();
-                dynamicFormSection.classList.add('d-none');
-                dynamicFormContent.innerHTML = '';
-                updateProgressSteps(1);
-                
-                // Redirect to main page after modal is closed
-                successModal._element.addEventListener('hidden.bs.modal', function() {
-                    window.location.href = 'index.html';
-                }, { once: true });
-            }, 2000);
+            }
         }
     });
 

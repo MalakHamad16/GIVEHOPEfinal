@@ -7,12 +7,136 @@ document.addEventListener('DOMContentLoaded', function () {
         email: "mohamed@example.com",
         wallet: 1250,
         joinYear: 2022,
-        totalDonated: 5750, // تم تغيير الاسم من totalDonations ليطابق الدالة الجديدة
+        totalDonated: 5750,
         goal: 10000,
         helpedCases: 12,
         completedCases: 8,
         monthlyAvg: 480
     };
+
+    // API Configuration
+    const API_BASE_URL = 'http://localhost:5000/api';
+
+    // ---------------------------------------------------------------------
+    // Fetch User Data from Backend
+    // ---------------------------------------------------------------------
+    async function fetchUserData() {
+        try {
+            // Get token from localStorage or sessionStorage
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            
+            if (!token) {
+                console.warn('No authentication token found. Redirecting to login...');
+                window.location.href = 'login.html';
+                return null;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    console.warn('Unauthorized. Token may be expired. Redirecting to login...');
+                    localStorage.removeItem('token');
+                    sessionStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    sessionStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                throw new Error('Failed to fetch user data');
+            }
+
+            const data = await response.json();
+            
+            if (data.success && data.user) {
+                // Update userData with backend data
+                userData.name = `${data.user.firstName} ${data.user.lastName}`;
+                userData.email = data.user.email;
+                userData.firstName = data.user.firstName;
+                userData.lastName = data.user.lastName;
+                userData.id = data.user._id || data.user.id;
+                userData.role = data.user.role;
+                userData.createdAt = data.user.createdAt;
+                
+                // Update user info displays
+                updateUserInfoDisplays();
+                
+                return data.user;
+            }
+            
+            return null;
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+            Swal.fire({
+                title: 'خطأ',
+                text: 'حدث خطأ في تحميل بيانات المستخدم',
+                icon: 'error',
+                confirmButtonText: 'حسناً'
+            });
+            return null;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Update User Info Displays
+    // ---------------------------------------------------------------------
+    function updateUserInfoDisplays() {
+        // Update header user info
+        const headerUserName = document.querySelector('.user-info > div > div:first-child');
+        if (headerUserName) {
+            headerUserName.textContent = `أهلاً بك، ${userData.firstName || userData.name}`;
+        }
+
+        const joinYear = document.getElementById("join-year");
+        if(joinYear) {
+            joinYear.innerHTML = new Date(userData.createdAt).getFullYear();
+        }
+
+        // Update profile sections
+        const profileName = document.querySelectorAll('.profile-info h3');
+        profileName.forEach(el => {
+            el.textContent = userData.name;
+        });
+
+        const profileEmail = document.querySelectorAll('.profile-info p');
+        profileEmail.forEach(el => {
+            el.textContent = userData.email;
+        });
+
+        // Update avatar initials
+        const initial = userData.firstName ? userData.firstName.charAt(0) : 'م';
+        const avatars = document.querySelectorAll('.user-avatar, .profile-avatar');
+        avatars.forEach(el => {
+            el.textContent = initial;
+        });
+
+        // Update form fields in profile tab
+        const firstNameInput = document.getElementById('firstName');
+        if (firstNameInput) {
+            firstNameInput.value = userData.firstName || '';
+        }
+
+        const lastNameInput = document.getElementById('lastName');
+        if (lastNameInput) {
+            lastNameInput.value = userData.lastName || '';
+        }
+
+        const emailInput = document.getElementById('email');
+        if (emailInput) {
+            emailInput.value = userData.email;
+        }
+
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+            phoneInput.value = userData.phone || '';
+        }
+    }
 
     const donations = [
         { id: 1, title: "حاله رقم -4 عمليه جراحيه عاجله", date: "15 مارس 2023", amount: 500, category: "health", status: "delivered" },
@@ -728,10 +852,114 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 2000);
     }
 
-    function saveOtherChanges() {
-        Swal.fire({
-            title: 'تم الحفظ', text: 'تم حفظ التغييرات بنجاح', icon: 'success', confirmButtonText: 'حسناً'
-        });
+    async function saveOtherChanges() {
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        if (!firstName) {
+            Swal.fire({
+                title: 'خطأ',
+                text: 'يرجى إدخال الاسم الأول',
+                icon: 'error',
+                confirmButtonText: 'حسناً'
+            });
+            return;
+        }
+
+        if (!lastName) {
+            Swal.fire({
+                title: 'خطأ',
+                text: 'يرجى إدخال اسم العائلة',
+                icon: 'error',
+                confirmButtonText: 'حسناً'
+            });
+            return;
+        }
+
+        try {
+            // Get token
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+            if (!token) {
+                Swal.fire({
+                    title: 'خطأ',
+                    text: 'يجب تسجيل الدخول أولاً',
+                    icon: 'error',
+                    confirmButtonText: 'حسناً'
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
+                return;
+            }
+
+            // Show loading
+            Swal.fire({
+                title: 'جاري حفظ التغييرات...',
+                text: 'يرجى الانتظار',
+                icon: 'info',
+                showConfirmButton: false,
+                allowOutsideClick: false
+            });
+
+            // Make API call
+            const response = await fetch(`${API_BASE_URL}/users/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    firstName: firstName,
+                    lastName: lastName,
+                    phone: phone
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // Update local userData
+                userData.firstName = data.user.firstName;
+                userData.lastName = data.user.lastName;
+                userData.name = `${data.user.firstName} ${data.user.lastName}`;
+                userData.email = data.user.email;
+                userData.phone = data.user.phone || '';
+
+                // Update displays
+                updateUserInfoDisplays();
+
+                Swal.fire({
+                    title: 'تم الحفظ',
+                    text: 'تم حفظ التغييرات بنجاح',
+                    icon: 'success',
+                    confirmButtonText: 'حسناً'
+                });
+            } else {
+                let errorMessage = 'حدث خطأ أثناء حفظ التغييرات';
+                
+                if (data.errors && data.errors.length > 0) {
+                    errorMessage = data.errors.map(err => err.msg).join(', ');
+                } else if (data.message) {
+                    errorMessage = data.message;
+                }
+
+                Swal.fire({
+                    title: 'خطأ',
+                    text: errorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'حسناً'
+                });
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            Swal.fire({
+                title: 'خطأ',
+                text: 'حدث خطأ في الاتصال بالخادم',
+                icon: 'error',
+                confirmButtonText: 'حسناً'
+            });
+        }
     }
 
     if (changePasswordBtn) {
@@ -1194,18 +1422,28 @@ document.addEventListener('DOMContentLoaded', function () {
     // ---------------------------------------------------------------------
     // 10. تهيئة كل شيء عند تحميل الصفحة (Initialization)
     // ---------------------------------------------------------------------
-    // ملاحظة: دالة loadHTML يجب أن تكون داخل ملف main.js أو يتم استدعاؤها بشكل صحيح
+    
+    // Load user data first, then initialize everything else
+    async function initializePage() {
+        // Fetch user data from backend
+        await fetchUserData();
+        
+        // Load shared components
+        await loadHTML('navbar.html', 'navbar-container');
+        await loadHTML('footer.html', 'footer-container');
 
-    loadHTML('navbar.html', 'navbar-container');
-    loadHTML('footer.html', 'footer-container');
+        // Initialize all displays
+        updateStatCards();
+        displayActiveCampaigns();
+        displayDonations();
+        displaySponsorRequests();
+        displaySuccessStories();
+        displayLatestDonations();
+        displayNextPaymentInfo();
+        setupDonationFilters();
+        setupSponsorRequestsFilters();
+    }
 
-    updateStatCards(); // 🛑 تحديث الإحصائيات أولاً
-    displayActiveCampaigns();
-    displayDonations();
-    displaySponsorRequests(); // عرض طلبات الكفالة
-    displaySuccessStories();
-    displayLatestDonations();
-    displayNextPaymentInfo(); // عرض معلومات الدفعة القادمة
-    setupDonationFilters();
-    setupSponsorRequestsFilters(); // إعداد فلاتر طلبات الكفالة
+    // Start initialization
+    initializePage();
 });

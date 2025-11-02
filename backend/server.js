@@ -36,6 +36,18 @@ app.use('/api/complaints', complaintRoutes);
 const zakatRoutes = require('./api/zakat');
 app.use('/api/zakat', zakatRoutes);
 
+//Routes for auth
+const authRoutes = require('./api/authRoutes');
+app.use('/api/auth', authRoutes);
+
+//Routes for users
+const userRoutes = require('./api/userRoutes');
+app.use('/api/users', userRoutes);
+
+//Routes for donation requests
+const donationRequestRoutes = require('./api/donationRequestRoutes');
+app.use('/api/donation-requests', donationRequestRoutes);
+
 // ✅ routes الحملات مع دعم الصور في POST و PUT
 const campaignController = require('./controllers/campaignController');
 app.get('/api/campaigns', campaignController.getAllCampaigns);
@@ -45,7 +57,7 @@ app.put('/api/campaigns/:id', upload.single('image'), campaignController.updateC
 app.delete('/api/campaigns/:id', campaignController.deleteCampaign);
 
 // الاتصال بقاعدة البيانات
-mongoose.connect('mongodb://localhost:27017/givehope')
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ تم الاتصال بقاعدة البيانات بنجاح'))
   .catch(err => console.error('❌ خطأ في الاتصال بقاعدة البيانات:', err));
 
