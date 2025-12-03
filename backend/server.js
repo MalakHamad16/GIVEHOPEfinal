@@ -48,6 +48,10 @@ app.use('/api/users', userRoutes);
 const donationRequestRoutes = require('./api/donationRequestRoutes');
 app.use('/api/donation-requests', donationRequestRoutes);
 
+//Routes for donation payments
+const donationPaymentRoutes = require('./api/donationPaymentRoutes');
+app.use('/api/donation-payments', donationPaymentRoutes);
+
 // ✅ routes الحملات مع دعم الصور في POST و PUT
 const campaignController = require('./controllers/campaignController');
 app.get('/api/campaigns', campaignController.getAllCampaigns);

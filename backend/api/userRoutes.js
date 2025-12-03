@@ -1,6 +1,6 @@
 const express = require('express');
 const { body } = require('express-validator');
-const { updateProfile, getProfile } = require('../controllers/userController');
+const { updateProfile, getProfile, updateGoal } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -31,5 +31,6 @@ const updateProfileValidation = [
 // Protected routes (require authentication)
 router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfileValidation, updateProfile);
+router.put('/goal', protect, updateGoal);
 
 module.exports = router;

@@ -1,5 +1,7 @@
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const DonationPayment = require('../models/DonationPayment');
+const { default: mongoose } = require('mongoose');
 
 // @desc    Update logged in user profile
 // @route   PUT /api/users/profile
@@ -69,22 +71,86 @@ exports.getProfile = async (req, res) => {
       });
     }
 
+    const data = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      donationGoal: user.donationGoal
+    }
+
+    if (user.role === 'donor') {
+      data.totalDonationAmount = (await DonationPayment.aggregate([
+        {
+          $match: {
+            donatee: new mongoose.Types.ObjectId(user._id)
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: '$donationAmount'
+            }
+          }
+        }
+      ]))?.[0]?.total ?? 0
+      data.totalDonationRequests = (await DonationPayment.find({
+        donatee: user._id
+      }).distinct('donationRequest')).length
+    }
+
     res.status(200).json({
       success: true,
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone,
-        role: user.role
-      }
+      user: data
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       success: false,
       message: 'Server error'
+    });
+  }
+};
+
+// @desc    Update user donation goal
+// @route   PUT /api/users/goal
+// @access  Private
+exports.updateGoal = async (req, res) => {
+  try {
+    const { goal } = req.body;
+
+    if (!goal || isNaN(goal) || Number(goal) <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid goal amount'
+      });
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    user.donationGoal = Number(goal);
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Goal updated successfully',
+      goal: user.donationGoal
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while updating goal'
     });
   }
 };
