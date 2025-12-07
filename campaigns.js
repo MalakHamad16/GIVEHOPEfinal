@@ -172,7 +172,7 @@ function renderCampaigns(filterStatus = 'all') {
     campaignsToRender = campaignsToRender.filter(camp => getDisplayStatus(camp) === filterStatus);
   }
 
-  // ✅ ترتيب ذكي — في جميع الحالات
+  //  ترتيب ذكي — في جميع الحالات
   campaignsToRender.sort((a, b) => {
     const statusA = getDisplayStatus(a);
     const statusB = getDisplayStatus(b);
@@ -347,8 +347,8 @@ function shareCampaign(id) {
       <button class="modal-close">&times;</button>
       <h3>مشاركة الحملة: ${camp.title}</h3>
       <div class="share-icons">
-        <a href="https://wa.me/?text=${encodeURIComponent(url)}" target="_blank"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank"><i class="fab fa-facebook"></i></a>
+        <a href="https://wa.me/?text=${encodeURIComponent(url)}"target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}"target="_blank"><i class="fab fa-facebook"></i></a>
         <button onclick="navigator.clipboard.writeText('${url}'); alert('تم نسخ الرابط');"><i class="fas fa-link"></i></button>
       </div>
     </div>

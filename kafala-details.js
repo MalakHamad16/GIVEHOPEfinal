@@ -1,225 +1,177 @@
 // kafala-details.js
+let currentCase = null;
 
-// نفس بيانات casesData من sponsor.js
-const casesData = [
-  {
-    id: "ORP001",
-    type: "educational",
-    title: "أهلاً، أنا ياسمين وعمري 16 سنة",
-    image: "images/girl.jpg",
-    totalAmount: 400,
-    duration: "6 أشهر",
-    description:
-      "أحتاج دعماً تعليمياً ونفسياً لأكمل دراستي وأحقق حلمي بأن أكون طبيبة.",
-    isSponsored: false,
-  },
-  {
-    id: "ORP002",
-    type: "orphans",
-    title: "أهلاً، أنا ليان وعمري 6 سنوات",
-    image: "images/orphan2.jpg",
-    totalAmount: 400,
-    duration: "7 أشهر",
-    description: "اسمي ليان ، عمري 6سنوات ، أحتاج من يدعمني لأوفر ملابس وغذاء ",
-    isSponsored: true,
-  },
-  {
-    id: "ORP003",
-    type: "educational",
-    title: "أهلاً، أنا عبدالله وعمري 16 سنة",
-    image: "images/student.jpg",
-    totalAmount: 400,
-    duration: "8 أشهر",
-    description:
-      "أحب القراءة وأريد أن أحصل على كتب ومصادر تعليمية لتطوير نفسي.",
-    isSponsored: false,
-  },
-  {
-    id: "EDU001",
-    type: "educational",
-    title: "أهلاً، أنا مبارك وعمري 16 سنة",
-    image: "images/girl.jpg",
-    totalAmount: 400,
-    duration: "3 أشهر",
-    description:
-      "أحتاج مساعدة لشراء أدوات مدرسية وحاسوب لمواصلة دراستي عن بعد.",
-    isSponsored: false,
-  },
-  {
-    id: "HEA001",
-    type: "health",
-    title: "أهلاً، أنا مها وعمري 16 سنة",
-    image: "images/sick.jpg",
-    totalAmount: 400,
-    duration: "4 أشهر",
-    description:
-      "أعاني من مشكلة صحية تحتاج لعلاج مستمر وأحتاج مساعدة لتغطية التكاليف.",
-    isSponsored: true,
-  },
-  {
-    id: "LIV001",
-    type: "living",
-    title: "أهلاً، أنا سعد وعمري 16 سنة",
-    image: "images/family.jpg",
-    totalAmount: 400,
-    duration: "5 أشهر",
-    description:
-      "أعيش مع جدتي المسنة وأحتاج دعماً لتأمين الغذاء والماء والكهرباء.",
-    isSponsored: false,
-  },
-];
+//  دالة مساعدة: الحصول على المستخدم الحالي
+function getCurrentUser() {
+  return JSON.parse(localStorage.getItem('user')) ||
+         JSON.parse(sessionStorage.getItem('user')) ||
+         null;
+}
 
-// دالة لتحويل نوع الكفالة إلى نص عربي
-const getTypeText = (type) => {
-  const types = {
+async function loadCaseDetails() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get("id");
+  if (!id) {
+    showError("لم يتم تحديد حالة للكفالة.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/sponsorships/${id}`);
+    const data = await res.json();
+    if (data.success && data.sponsorship) {
+      currentCase = data.sponsorship;
+      displayCase(data.sponsorship);
+    } else {
+      showError("الحالة المطلوبة غير موجودة.");
+    }
+  } catch (err) {
+    console.error(err);
+    showError("حدث خطأ أثناء تحميل التفاصيل.");
+  }
+}
+
+function getImagePath(type) {
+  const imageMap = {
+    orphans: "orphans.jpg",
+    educational: "educational.jpg",
+    health: "health.jpg",
+    living: "living.jpg",
+    general: "general.jpg",
+  };
+  return `/uploads/sponsor/${imageMap[type] || "default.jpg"}`;
+}
+
+function getTypeText(type) {
+  const map = {
     orphans: "أيتام وأطفال",
     educational: "تعليمية",
     health: "صحية",
     living: "معيشية",
+    general: "شاملة", 
   };
-  return types[type] || type;
-};
+  return map[type] || type;
+}
 
-// دالة لحساب تاريخ الانتهاء
-const calculateEndDate = (duration) => {
-  const months = parseInt(duration);
-  const today = new Date();
-  const endDate = new Date(today);
-  endDate.setMonth(endDate.getMonth() + months);
-
-  return endDate.toLocaleDateString("ar-EG", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-};
-
-// عرض تفاصيل الحالة
-const displayCaseDetails = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const caseId = urlParams.get("id");
-
-  if (!caseId) {
-    document.querySelector(".kafala-card").innerHTML =
-      '<div class="alert alert-warning text-center m-4">لم يتم تحديد حالة للكفالة.</div>';
-    return;
-  }
-
-  const caseItem = casesData.find((c) => c.id === caseId);
-  if (!caseItem) {
-    document.querySelector(".kafala-card").innerHTML =
-      '<div class="alert alert-info text-center m-4">الحالة المطلوبة غير موجودة.</div>';
-    return;
-  }
-
-  // عرض البيانات
-  document.getElementById("caseTitle").textContent = caseItem.title;
-  document.getElementById("caseImage").src = caseItem.image;
-  document.getElementById("caseId").textContent = `رقم الحالة: ${caseItem.id}`;
-  document.getElementById("caseDescription").textContent = caseItem.description;
+//  تحديث: عرض درجة الاستعجال بالعربية + مبلغ مع periodLabel
+function displayCase(caseItem) {
+  document.getElementById("caseTitle").textContent = `أهلاً، أنا ${caseItem.firstName}`;
+  document.getElementById("caseImage").src = getImagePath(caseItem.type);
+  document.getElementById("caseId").textContent = `رقم الحالة: ${caseItem.caseId}`;
+  document.getElementById("caseDescription").textContent = caseItem.shortDescription;
   document.getElementById("caseType").textContent = getTypeText(caseItem.type);
-  document.getElementById(
-    "totalAmount"
-  ).textContent = `${caseItem.totalAmount} ₪`;
-  document.getElementById("duration").textContent = caseItem.duration;
-  document.getElementById("endDate").textContent = calculateEndDate(
-    caseItem.duration
-  );
+  
+  //  عرض المبلغ كـ "100 ₪/شهريًا"
+  document.getElementById("totalAmount").textContent = 
+    `${caseItem.amountPerPeriod} ₪/${caseItem.periodLabel}`;
+  
+  document.getElementById("duration").textContent = caseItem.durationLabel;
+  document.getElementById("city").textContent = caseItem.city;
+  
+  const beneficiaryText = 
+    caseItem.beneficiaryCount === 1 ? "مستفيد واحد" : `${caseItem.beneficiaryCount} مستفيدين`;
+  document.getElementById("beneficiaryCount").textContent = beneficiaryText;
+  
+  document.getElementById("endDate").textContent = 
+    new Date(caseItem.preferredSponsorshipDeadline)
+      .toLocaleDateString("ar-EG", { day: "numeric", month: "long", year: "numeric" });
+  
+  //  عرض عدد الفترات المدفوعة
+  document.getElementById("paidPeriods").textContent = caseItem.paidPeriods || 0;
 
-  // عرض ختم "مكفول" إذا كانت الحالة مكفولة
-  const sponsoredBadge = document.getElementById("sponsoredBadge");
+  //  عرض درجة الاستعجال بالعربية
+  const urgencyMap = {
+    critical: 'طارئ',
+    high: 'عاجل',
+    medium: 'مهم',
+    low: 'عادي'
+  };
+  document.getElementById("urgencyLevel").textContent = 
+    urgencyMap[caseItem.urgencyLevel] || 'عادي';
+
+  //  ختم الحالة
+  const badge = document.getElementById("statusBadge");
+  const badgeText = document.getElementById("statusBadgeText");
+  if (caseItem.status === "fully sponsored") {
+    badge.className = "status-badge fully-sponsored";
+    badgeText.textContent = "مكفولة بنجاح";
+    badge.style.display = "flex";
+  } else if (caseItem.status === "partially sponsored") {
+    badge.className = "status-badge partially-sponsored";
+    badgeText.textContent = "مكفولة جزئياً";
+    badge.style.display = "flex";
+  } else {
+    badge.style.display = "none";
+  }
+
+  //  زر "اكفل الآن" — تفعيل حسب الحالة + هوية الكفيل
   const sponsorLink = document.getElementById("sponsorLink");
+  const currentUser = getCurrentUser();
 
-  if (caseItem.isSponsored) {
-    sponsoredBadge.style.display = "block";
+  if (caseItem.status === "fully sponsored") {
     sponsorLink.classList.add("disabled");
     sponsorLink.style.opacity = "0.6";
     sponsorLink.style.pointerEvents = "none";
     sponsorLink.innerHTML = '<i class="fas fa-check"></i> تم الكفالة';
+
+  } else if (caseItem.status === "partially sponsored") {
+    if (currentUser && currentUser.id === caseItem.sponsorId) {
+      // الكفيل الحالي → يسمح له بالدفع
+      sponsorLink.href = `DonateNow.html?type=sponsor&id=${caseItem._id}`;
+      sponsorLink.classList.remove("disabled");
+      sponsorLink.style.opacity = "1";
+      sponsorLink.style.pointerEvents = "auto";
+      sponsorLink.innerHTML = '<i class="fas fa-hand-holding-usd"></i> ادفع الدفعة القادمة';
+    } else {
+      // غير الكفيل → معطّل
+      sponsorLink.classList.add("disabled");
+      sponsorLink.style.opacity = "0.6";
+      sponsorLink.style.pointerEvents = "none";
+      sponsorLink.innerHTML = '<i class="fas fa-user-check"></i> مكفولة جزئياً';
+    }
+
   } else {
-    sponsorLink.href = `sponsorform.html?id=${caseItem.id}`;
+    // غير مكفولة → مفتوح للجميع
+    sponsorLink.href = `DonateNow.html?type=sponsor&id=${caseItem._id}`;
+    sponsorLink.classList.remove("disabled");
+    sponsorLink.style.opacity = "1";
+    sponsorLink.style.pointerEvents = "auto";
+    sponsorLink.innerHTML = '<i class="fas fa-hands-helping"></i> اكفل الآن';
   }
-};
+}
 
-// وظائف المشاركة
-const setupShareFunctionality = () => {
-  // زر فتح نافذة المشاركة
-  document.getElementById("shareBtn").addEventListener("click", () => {
-    const modal = new bootstrap.Modal(document.getElementById("shareModal"));
-    modal.show();
-  });
+function showError(msg) {
+  document.querySelector(".kafala-card").innerHTML = 
+    `<div class="alert alert-danger text-center m-4">${msg}</div>`;
+}
 
-  // مشاركة عبر واتساب
-  document.getElementById("whatsappShare").addEventListener("click", (e) => {
-    e.preventDefault();
-    const urlParams = new URLSearchParams(window.location.search);
-    const caseId = urlParams.get("id");
-    const caseItem = casesData.find((c) => c.id === caseId);
-    const url = window.location.href;
-    const text = caseItem
-      ? `ادعم ${caseItem.title} في كفالته عبر GiveHope`
-      : "ادعم هذه الكفالة عبر GiveHope";
-    window.open(
-      `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`,
-      "_blank"
-    );
-  });
+//  دالة مشاركة موحدة
+function shareCurrentCase() {
+  if (!currentCase) {
+    alert("لا يمكن مشاركة الكفالة حالياً. يرجى إعادة تحميل الصفحة.");
+    return;
+  }
+  const url = `${window.location.origin}/SponsorNow.html?type=sponsorship&needyID=${currentCase._id}`;
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <h3>مشاركة الكفالة: ${currentCase.firstName}</h3>
+      <div class="share-icons">
+        <a href="https://wa.me/?text=${encodeURIComponent(url)}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank"><i class="fab fa-facebook"></i></a>
+        <button onclick="navigator.clipboard.writeText('${url}'); alert('تم نسخ الرابط')"><i class="fas fa-link"></i></button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.style.display = 'flex';
+  modal.querySelector('.modal-close').onclick = () => modal.remove();
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+}
 
-  // مشاركة عبر فيسبوك
-  document.getElementById("facebookShare").addEventListener("click", (e) => {
-    e.preventDefault();
-    const url = window.location.href;
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      "_blank",
-      "width=600,height=400"
-    );
-  });
-
-  // نسخ الرابط
-  document.getElementById("copyLink").addEventListener("click", () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      const toast = new bootstrap.Toast(document.getElementById("copyToast"));
-      toast.show();
-    });
-  });
-};
-
-// تشغيل عند تحميل الصفحة
+// تشغيل عند التحميل
 document.addEventListener("DOMContentLoaded", () => {
-  displayCaseDetails();
-  setupShareFunctionality();
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  // اقرأ معرّف الحالة من الرابط
-  const urlParams = new URLSearchParams(window.location.search);
-  const caseId = urlParams.get("id");
-
-  if (caseId) {
-    // عيّن الرابط الصحيح لزر "اكفل الآن"
-    const sponsorLink = document.getElementById("sponsorLink");
-    sponsorLink.href = `donate.html?type=sponsor&id=${caseId}`;
-  } else {
-    // إذا ما في ID، اجعل الزر معطّلًا
-    document.getElementById("sponsorLink").style.opacity = "0.5";
-    document.getElementById("sponsorLink").style.pointerEvents = "none";
-  }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  // اقرأ معرّف الحالة من الرابط (مثل ?id=ORP001)
-  const urlParams = new URLSearchParams(window.location.search);
-  const caseId = urlParams.get('id');
-
-  if (caseId) {
-    // عيّن الرابط الصحيح مع معرّف الحالة
-    document.getElementById('sponsorLink').href = `DonateNow.html?type=sponsor&id=${caseId}`;
-  } else {
-    // إذا ما في ID، عطّل الزر
-    const link = document.getElementById('sponsorLink');
-    link.style.opacity = '0.5';
-    link.style.pointerEvents = 'none';
-    link.title = 'لا يمكن الكفالة - معرف الحالة غير متوفر';
-  }
+  loadCaseDetails();
 });

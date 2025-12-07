@@ -48,6 +48,12 @@ app.use('/api/users', userRoutes);
 const donationRequestRoutes = require('./api/donationRequestRoutes');
 app.use('/api/donation-requests', donationRequestRoutes);
 
+// Routes for approved sponsorships
+const sponsorshipRoutes = require('./api/sponsorshipRoutes');
+app.use('/api/sponsorships', sponsorshipRoutes);
+//sponsor pictures
+app.use('/public/sponsor', express.static(path.join(__dirname, '../public/sponsor')));
+
 // ✅ routes الحملات مع دعم الصور في POST و PUT
 const campaignController = require('./controllers/campaignController');
 app.get('/api/campaigns', campaignController.getAllCampaigns);
@@ -57,7 +63,10 @@ app.put('/api/campaigns/:id', upload.single('image'), campaignController.updateC
 app.delete('/api/campaigns/:id', campaignController.deleteCampaign);
 
 // الاتصال بقاعدة البيانات
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect('mongodb://localhost:27017/givehope', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
   .then(() => console.log('✅ تم الاتصال بقاعدة البيانات بنجاح'))
   .catch(err => console.error('❌ خطأ في الاتصال بقاعدة البيانات:', err));
 

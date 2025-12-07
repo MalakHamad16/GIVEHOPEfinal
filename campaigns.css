@@ -254,6 +254,7 @@ main {
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  align-self: center;
 }
 .btn-share:hover {
   background-color: #2563eb;
