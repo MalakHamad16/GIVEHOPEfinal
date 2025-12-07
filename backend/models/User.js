@@ -39,6 +39,9 @@ const userSchema = new mongoose.Schema({
     enum: ['donor', 'needy', 'admin'],
     default: 'donor'
   },
+  donationGoal: {
+    type: Number
+  },
   status: {
     type: String,
     enum: ["active","inactive"],

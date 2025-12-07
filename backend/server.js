@@ -53,6 +53,9 @@ const sponsorshipRoutes = require('./api/sponsorshipRoutes');
 app.use('/api/sponsorships', sponsorshipRoutes);
 //sponsor pictures
 app.use('/public/sponsor', express.static(path.join(__dirname, '../public/sponsor')));
+//Routes for donation payments
+const donationPaymentRoutes = require('./api/donationPaymentRoutes');
+app.use('/api/donation-payments', donationPaymentRoutes);
 
 // ✅ routes الحملات مع دعم الصور في POST و PUT
 const campaignController = require('./controllers/campaignController');

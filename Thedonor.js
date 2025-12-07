@@ -24,14 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             // Get token from localStorage or sessionStorage
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            
+
             if (!token) {
                 console.warn('No authentication token found. Redirecting to login...');
                 window.location.href = 'login.html';
                 return null;
             }
 
-            const response = await fetch(`${API_BASE_URL}/auth/me`, {
+            const response = await fetch(`${API_BASE_URL}/users/profile`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const data = await response.json();
-            
+
             if (data.success && data.user) {
                 // Update userData with backend data
                 userData.name = `${data.user.firstName} ${data.user.lastName}`;
@@ -62,14 +62,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 userData.lastName = data.user.lastName;
                 userData.id = data.user._id || data.user.id;
                 userData.role = data.user.role;
-                userData.createdAt = data.user.createdAt;
-                
+                userData.phone = data.user.phone || '';
+                userData.donationGoal = data.user.donationGoal;
+
+                // Update donation statistics from profile API
+                if (data.user.totalDonationAmount !== undefined) {
+                    userData.totalDonated = data.user.totalDonationAmount;
+                }
+                if (data.user.totalDonationRequests !== undefined) {
+                    userData.helpedCases = data.user.totalDonationRequests;
+                }
+
+                // Set created date (use current date if not available from profile API)
+                userData.createdAt = data.user.createdAt || new Date().toISOString();
+
                 // Update user info displays
                 updateUserInfoDisplays();
-                
+
                 return data.user;
             }
-            
+
             return null;
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -94,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const joinYear = document.getElementById("join-year");
-        if(joinYear) {
+        if (joinYear) {
             joinYear.innerHTML = new Date(userData.createdAt).getFullYear();
         }
 
@@ -136,18 +148,113 @@ document.addEventListener('DOMContentLoaded', function () {
         if (phoneInput) {
             phoneInput.value = userData.phone || '';
         }
+
+        const statTotalDonationRequests = document.getElementById("stat-total-donation-requests")
+        if (statTotalDonationRequests) {
+            statTotalDonationRequests.innerHTML = `${userData.helpedCases} حالة`;
+        }
+
+        const donationsGoal = document.getElementById("stat-donations-goal")
+        if (donationsGoal) {
+            donationsGoal.innerHTML = userData.donationGoal
+        }
     }
 
-    const donations = [
-        { id: 1, title: "حاله رقم -4 عمليه جراحيه عاجله", date: "15 مارس 2023", amount: 500, category: "health", status: "delivered" },
-        { id: 2, title: "حاله رقم -7 شراء كتب مدرسيه", date: "5 مارس 2023", amount: 700, category: "education", status: "pending" },
-        { id: 3, title: "حاله رقم -10 ايجار منزل", date: "28 فبراير 2023", amount: 1000, category: "living", status: "pending" },
-        { id: 4, title: "حاله رقم -10 شراء ادويه لمريض سكري", date: "15 فبراير 2023", amount: 1500, category: "health", status: "delivered" },
-        { id: 5, title: "حاله رقم -9 فاتوره كهرباء ل عائله", date: "15 ابريل 2023", amount: 500, category: "living", status: "delivered" },
-        { id: 6, title: "حمله رقم -2 كسوه الشتاء", date: "15 يونيو 2023", amount: 200, category: "campaigns", status: "delivered" },
-        { id: 7, title: "حمله رقم -4 الإفطار الرمضاني", date: "25 يونيو 2023", amount: 50, category: "campaigns", status: "delivered" },
-        { id: 8, title: "حمله رقم -5 سلال غذائيه", date: "25 يوليو 2023", amount: 50, category: "campaigns", status: "delivered" }
-    ];
+    // Donations will be fetched from API
+    let donations = [];
+
+    // ---------------------------------------------------------------------
+    // Fetch Donation Payments from Backend
+    // ---------------------------------------------------------------------
+    async function fetchDonationPayments() {
+        try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+            if (!token) {
+                console.warn('No authentication token found');
+                return;
+            }
+
+            // Fetch payments by donatee (current user)
+            if (!userData.id) {
+                console.warn('User ID not available');
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/donation-payments/donatee/${userData.id}?limit=100`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch donation payments');
+            }
+
+            const data = await response.json();
+
+            if (data.success && data.donationPayments) {
+                // Transform API data to match the format expected by display functions
+                donations = data.donationPayments.map(payment => {
+                    // Map payment status to display status
+                    let status = 'pending';
+                    if (payment.status === 'completed') {
+                        status = 'delivered';
+                    } else if (payment.status === 'failed' || payment.status === 'refunded') {
+                        status = 'pending';
+                    }
+
+                    // Get category from donation request if available
+                    let category = 'other';
+                    if (payment.donationRequest && payment.donationRequest.requestType) {
+                        category = payment.donationRequest.requestType;
+                    }
+
+                    // Format title
+                    let title = 'تبرع';
+                    if (payment.donationRequest) {
+                        const reqType = payment.donationRequest.requestType || 'other';
+                        const reqId = payment.donationRequest._id || payment.donationRequest.id;
+                        title = `حالة ${reqType} - رقم ${reqId.substring(reqId.length - 6)}`;
+                    }
+
+                    // Format date
+                    const paymentDate = new Date(payment.donationDate);
+                    const formattedDate = paymentDate.toLocaleDateString('ar-EG', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+
+                    return {
+                        id: payment._id || payment.id,
+                        title: title,
+                        date: formattedDate,
+                        amount: payment.donationAmount,
+                        category: category,
+                        status: status
+                    };
+                });
+
+                // Calculate total donated amount
+                const totalDonated = donations
+                    .filter(d => d.status === 'delivered')
+                    .reduce((sum, d) => sum + d.amount, 0);
+
+                userData.totalDonated = totalDonated;
+                userData.helpedCases = donations.length;
+
+                // Update displays
+                updateStatCards();
+                displayDonations();
+                displayLatestDonations();
+            }
+        } catch (error) {
+            console.error('Error fetching donation payments:', error);
+        }
+    }
 
     const activeCampaigns = [
         { id: 50, title: "كسوة الشتاء", progress: 70, target: 10000, current: 7000, category: "campaigns", image: "images/winter-clothes.jpg", deadline: "30 نوفمبر 2025" },
@@ -320,11 +427,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // 2. تحديث بطاقات الإحصائيات (Goal Update & Stats Cards) 🎯
     // ---------------------------------------------------------------------
     function updateStatCards() {
-        const totalDonated = userData.totalDonated;
-        const personalGoal = userData.goal;
+        const totalDonated = parseFloat(userData.totalDonationAmount ?? 0);
+        const personalGoal = parseFloat(userData.donationGoal ?? 0)
 
         // حساب النسبة المئوية
-        let percentAchieved = (totalDonated / personalGoal) * 100;
+        let percentAchieved = !personalGoal ? 0 : (totalDonated / personalGoal) * 100;
         // تقريب النسبة الآمنة (لا تزيد عن 100%)
         const safePercent = Math.round(percentAchieved > 100 ? 100 : percentAchieved);
 
@@ -335,13 +442,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
         // === تحديث بطاقة "رصيدي الكامل من الخير" ===
-        const amountElement = document.querySelector('.donation-amount');
+        const amountElement = document.querySelectorAll('.donation-amount');
         const goalTextElement = document.querySelector('.goal-display-text');
         const progressBarFill = document.querySelector('.progress-fill');
         const statGoal = document.querySelector("#stat-goal");
         const statGoalPercentage = document.querySelector("#stat-goal-percentage");
         if (amountElement) {
-            amountElement.innerHTML = formattedTotal;
+            amountElement.forEach(item => {
+                item.innerHTML = formattedTotal;
+            })
         }
 
         if (statGoal) {
@@ -394,12 +503,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // === ربط تحديث الهدف بالدالة ===
     const updateGoalButton = document.getElementById('updateGoal');
     if (updateGoalButton) {
-        updateGoalButton.addEventListener('click', function () {
-            Swal.fire({
+        updateGoalButton.addEventListener('click', async function () {
+            const result = await Swal.fire({
                 title: 'تحديث الهدف',
                 input: 'number',
                 inputLabel: 'الهدف الجديد (د.ا)',
-                inputValue: userData.goal,
+                inputValue: userData.donationGoal,
                 showCancelButton: true,
                 confirmButtonText: 'حفظ',
                 cancelButtonText: 'إلغاء',
@@ -408,14 +517,79 @@ document.addEventListener('DOMContentLoaded', function () {
                         return 'الرجاء إدخال هدف صحيح وموجب';
                     }
                 }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    userData.goal = parseInt(result.value);
-                    // 🛑 هذا هو الاستدعاء المهم لتحديث البطاقات
-                    updateStatCards();
-                    Swal.fire('تم!', 'تم تحديث الهدف بنجاح', 'success');
-                }
             });
+
+            if (result.isConfirmed) {
+                const newGoal = parseInt(result.value);
+                
+                try {
+                    // Get token
+                    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                    
+                    if (!token) {
+                        Swal.fire({
+                            title: 'خطأ',
+                            text: 'يجب تسجيل الدخول أولاً',
+                            icon: 'error',
+                            confirmButtonText: 'حسناً'
+                        });
+                        return;
+                    }
+
+                    // Show loading
+                    Swal.fire({
+                        title: 'جاري تحديث الهدف...',
+                        text: 'يرجى الانتظار',
+                        icon: 'info',
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                    });
+
+                    // Make API call
+                    const response = await fetch(`${API_BASE_URL}/users/goal`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            goal: newGoal
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Update local userData
+                        userData.donationGoal = data.goal;
+                        
+                        // Update the UI
+                        updateStatCards();
+                        
+                        Swal.fire({
+                            title: 'تم!',
+                            text: 'تم تحديث الهدف بنجاح',
+                            icon: 'success',
+                            confirmButtonText: 'حسناً'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'خطأ',
+                            text: data.message || 'حدث خطأ أثناء تحديث الهدف',
+                            icon: 'error',
+                            confirmButtonText: 'حسناً'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error updating goal:', error);
+                    Swal.fire({
+                        title: 'خطأ',
+                        text: 'حدث خطأ في الاتصال بالخادم',
+                        icon: 'error',
+                        confirmButtonText: 'حسناً'
+                    });
+                }
+            }
         });
     }
 
@@ -925,6 +1099,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 userData.name = `${data.user.firstName} ${data.user.lastName}`;
                 userData.email = data.user.email;
                 userData.phone = data.user.phone || '';
+                userData.donationGoal = data.user.donationGoal;
+
+                // Update donation statistics from profile API
+                if (data.user.totalDonationAmount !== undefined) {
+                    userData.totalDonated = data.user.totalDonationAmount;
+                }
+                if (data.user.totalDonationRequests !== undefined) {
+                    userData.helpedCases = data.user.totalDonationRequests;
+                }
 
                 // Update displays
                 updateUserInfoDisplays();
@@ -937,7 +1120,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             } else {
                 let errorMessage = 'حدث خطأ أثناء حفظ التغييرات';
-                
+
                 if (data.errors && data.errors.length > 0) {
                     errorMessage = data.errors.map(err => err.msg).join(', ');
                 } else if (data.message) {
@@ -1353,7 +1536,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 urgencyClass = 'soon';
                 urgencyText = 'قريباً';
             }
-                    const periodText = getPeriodText(sponsorship.paymentPeriod);
+            const periodText = getPeriodText(sponsorship.paymentPeriod);
 
             sponsorShopItem.innerHTML = `
                 <div>
@@ -1422,12 +1605,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // ---------------------------------------------------------------------
     // 10. تهيئة كل شيء عند تحميل الصفحة (Initialization)
     // ---------------------------------------------------------------------
-    
+
     // Load user data first, then initialize everything else
     async function initializePage() {
         // Fetch user data from backend
         await fetchUserData();
-        
+
+        // Fetch donation payments from API
+        await fetchDonationPayments();
+
         // Load shared components
         await loadHTML('navbar.html', 'navbar-container');
         await loadHTML('footer.html', 'footer-container');
