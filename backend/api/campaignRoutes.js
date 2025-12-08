@@ -2,15 +2,16 @@
 const express = require('express');
 const router = express.Router();
 const campaignController = require('../controllers/campaignController');
+const { protect } = require('../middleware/authMiddleware');
+const { authorize } = require('../middleware/authMiddleware');
 
-//  لاحقًا إضافة middleware للتحقق من الصلاحيات (isAdmin)
-// const auth = require('../middleware/auth');
-// const adminOnly = require('../middleware/adminOnly');
-
+// جلب الحملات: للجميع (حتى الزوار — حسب ما هو مطلوب في المشروع)
 router.get('/', campaignController.getAllCampaigns);
 router.get('/:id', campaignController.getCampaignById);
-router.post('/', /* auth, adminOnly, */ campaignController.createCampaign);
-router.put('/:id', /* auth, adminOnly, */ campaignController.updateCampaign);
-router.delete('/:id', /* auth, adminOnly, */ campaignController.deleteCampaign);
+
+// إنشاء/تعديل/حذف: فقط للمدراء
+router.post('/', protect, authorize('admin'), campaignController.createCampaign);
+router.put('/:id', protect, authorize('admin'), campaignController.updateCampaign);
+router.delete('/:id', protect, authorize('admin'), campaignController.deleteCampaign);
 
 module.exports = router;

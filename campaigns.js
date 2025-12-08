@@ -1,33 +1,59 @@
-// campaigns.js
-// تحديد نوع المستخدم (في الإنتاج، يجب أن يأتي من JwtToken توكن)
-const isAdmin = true; // غيّر إلى false لاختبار كمستخدم عادي
-// جلب حالة المستخدم من localStorage (الذي سيُملأ بعد تسجيل الدخول)
-//const isAdmin = localStorage.getItem('isAdmin') === 'true';
+// campaigns.js — النسخة النهائية المدعومة بالصلاحيات
+
+// ✅ دالة فك تشفير JWT (لقراءة role)
+function parseJwt(token) {
+  if (!token) return null;
+  try {
+    const base64Payload = token.split('.')[1];
+    const payload = atob(base64Payload);
+    return JSON.parse(payload);
+  } catch (e) {
+    console.warn('⚠️ Invalid JWT format');
+    return null;
+  }
+}
+
+// ✅ جلب المستخدم الحالي (من localStorage/sessionStorage)
+function getCurrentUser() {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (!token) return null;
+
+  const payload = parseJwt(token);
+  if (!payload || !payload.id) return null;
+
+  // نعطي أولوية للـ role من التوكن (أكثر أمانًا)
+  const savedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+  return {
+    id: payload.id,
+    role: payload.role || savedUser.role || 'donor',
+    firstName: savedUser.firstName || '',
+    lastName: savedUser.lastName || ''
+  };
+}
+
+// ✅ اشتقاق أذونات المستخدم
+const currentUser = getCurrentUser();
+const isAdmin = currentUser?.role === 'admin';
+const isDonor = currentUser?.role === 'donor';
+const isNeedy = currentUser?.role === 'needy';
+const isLoggedIn = !!currentUser;
 
 let campaignsData = [];
 
-// دالة مساعدة لتحويل رمز العملة
+// ✅ دالة مساعدة لتحويل رمز العملة
 function getCurrencySymbol(code) {
-  const symbols = {
-    ILS: '₪',
-    USD: '$',
-    JOD: 'د.أ',
-    AED: 'د.إ'
-  };
+  const symbols = { ILS: '₪', USD: '$', JOD: 'د.أ', AED: 'د.إ' };
   return symbols[code] || '₪';
 }
 
-// تحويل تاريخ ISO إلى تنسيق محلي (مثلاً: 25/10/2025)
+// تحويل تاريخ ISO إلى تنسيق محلي
 function formatDateForDisplay(isoDateString) {
   if (!isoDateString) return '';
   const date = new Date(isoDateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+  return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
 }
 
-// دالة لجلب الحملات من الباك-إند
+// دالة لجلب الحملات
 async function fetchCampaigns() {
   try {
     const res = await fetch('/api/campaigns');
@@ -41,14 +67,12 @@ async function fetchCampaigns() {
       goal: camp.goalAmount,
       collectedAmount: camp.collectedAmount || 0,
       currency: getCurrencySymbol(camp.currency || 'ILS'),
-      // الاحتفاظ بالتواريخ الأصلية للمنطق الداخلي
       startDateRaw: camp.startDate,
       endDateRaw: camp.endDate,
-      // التواريخ المنسّقة للعرض
       startDate: formatDateForDisplay(camp.startDate),
       endDate: formatDateForDisplay(camp.endDate),
       description: camp.description,
-      image: camp.image || 'https://via.placeholder.com/300x200?text=No+Image',
+      image: camp.image || 'https://via.placeholder.com/300x200?text=لا توجد صورة',
       status: camp.status,
       duration: calculateDuration(camp.startDate, camp.endDate)
     }));
@@ -67,13 +91,13 @@ function calculateDuration(startStr, endStr) {
   return `${Math.floor(diffDays / 365)} سنة`;
 }
 
-// تحديد الحالة المعروضة
+// ✅ إصلاح: استخدام camp.goal (ليس goalAmount)
 function getDisplayStatus(camp) {
   const now = new Date();
   const start = new Date(camp.startDateRaw);
   const end = new Date(camp.endDateRaw);
   const collected = camp.collectedAmount || 0;
-  const goal = camp.goalAmount || 1;
+  const goal = camp.goal || 1; // ← ✅ الصحيح
 
   if (camp.status === 'pending') return 'pending';
   if (start > now) return 'scheduled';
@@ -81,30 +105,47 @@ function getDisplayStatus(camp) {
   return collected >= goal ? 'completed' : 'active';
 }
 
-// ترجمة الحالة إلى نص ولون
 function getStatusInfo(displayStatus) {
-  switch (displayStatus) {
-    case 'active': return { text: 'نشطة', color: '#16a34a' };
-    case 'completed': return { text: 'مكتملة بنجاح', color: '#3b82f6' };
-    case 'ended': return { text: 'منتهية', color: '#d1d5db' };
-    case 'scheduled': return { text: 'مجدولة', color: '#90909bff' };
-    case 'pending': return { text: 'معلقة', color: '#f59e0b' };
-    default: return { text: 'غير معروفة', color: '#5e4668ff' };
-  }
+  const map = {
+    active: { text: 'نشطة', color: '#16a34a' },
+    completed: { text: 'مكتملة بنجاح', color: '#3b82f6' },
+    ended: { text: 'منتهية', color: '#a80909ff' },
+    scheduled: { text: 'مجدولة', color: '#90909bff' },
+    pending: { text: 'معلقة', color: '#f59e0b' }
+  };
+  return map[displayStatus] || { text: 'غير معروفة', color: '#5e4668ff' };
 }
 
-// إنشاء بطاقة الحملة
+// ✅ إنشاء بطاقة الحملة — حسب الصلاحية
 function createCampaignCard(camp) {
   const displayStatus = getDisplayStatus(camp);
   const statusInfo = getStatusInfo(displayStatus);
   const isDonatable = (displayStatus === 'active');
 
-  let donateBtnHtml = '';
-  if (!isAdmin) {
-    if (isDonatable) {
-      donateBtnHtml = `<a href="DonateNow.html?type=donation&campaign=${camp.id}" class="btn btn-primary">تبرع الآن</a>`;
+  let buttonsHtml = '';
+
+  if (isAdmin) {
+    // أزرار المدير
+    buttonsHtml = `
+      <a href="edit-campaign.html?id=${camp.id}" class="btn btn-admin-edit">تعديل</a>
+      <button class="btn btn-admin-delete" onclick="deleteCampaign('${camp.id}')">حذف</button>
+      <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
+      <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
+    `;
+  } else {
+    // غير المدير (متبرع أو محتاج أو زائر)
+    if (isLoggedIn && isDonatable) {
+      buttonsHtml = `
+        <a href="DonateNow.html?type=donation&campaign=${camp.id}" class="btn btn-primary">تبرع الآن</a>
+        <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
+        <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
+      `;
     } else {
-      donateBtnHtml = `<button class="btn btn-primary disabled" disabled>غير متاح</button>`;
+      buttonsHtml = `
+        <button class="btn btn-primary disabled" disabled>${isLoggedIn ? 'غير متاح' : 'سجّل دخولك أولًا'}</button>
+        <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
+        <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
+      `;
     }
   }
 
@@ -112,10 +153,8 @@ function createCampaignCard(camp) {
   card.className = 'campaign-card';
   card.innerHTML = `
     <div class="campaign-image">
-      <img src="${camp.image}" alt="${camp.title}">
-      <span class="status-badge" style="background:${statusInfo.color}; color:white">
-        ${statusInfo.text}
-      </span>
+      <img src="${camp.image}" alt="${camp.title}" onerror="this.src='https://via.placeholder.com/300x200?text=لا توجد صورة'">
+      <span class="status-badge" style="background:${statusInfo.color}; color:white">${statusInfo.text}</span>
     </div>
     <div class="campaign-content">
       <h3 class="campaign-title">${camp.title}</h3>
@@ -130,28 +169,13 @@ function createCampaignCard(camp) {
         <span>${camp.collectedAmount.toLocaleString()}${camp.currency}</span>
         <span>من ${camp.goal.toLocaleString()}${camp.currency}</span>
       </div>
-      <div class="card-buttons">
-        ${
-          isAdmin
-            ? `
-              <a href="edit-campaign.html?id=${camp.id}" class="btn btn-admin-edit">تعديل</a>
-              <button class="btn btn-admin-delete" onclick="deleteCampaign('${camp.id}')">حذف</button>
-              <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
-              <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
-            `
-            : `
-              ${donateBtnHtml}
-              <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
-              <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
-            `
-        }
-      </div>
+      <div class="card-buttons">${buttonsHtml}</div>
     </div>
   `;
   return card;
 }
 
-// عرض الحملات مع ترتيب ذكي في جميع الفلاتر
+// عرض الحملات — كما هو (مع الترتيب الصحيح)
 function renderCampaigns(filterStatus = 'all') {
   const containers = {
     active: document.getElementById('campaignsContainer'),
@@ -161,92 +185,40 @@ function renderCampaigns(filterStatus = 'all') {
     pending: document.getElementById('pendingCampaigns')
   };
 
-  Object.values(containers).forEach(container => {
-    if (container) container.innerHTML = '';
-  });
+  Object.values(containers).forEach(c => { if (c) c.innerHTML = ''; });
 
   let campaignsToRender = [...campaignsData];
 
-  // تصفية حسب الحالة المطلوبة
   if (filterStatus !== 'all') {
-    campaignsToRender = campaignsToRender.filter(camp => getDisplayStatus(camp) === filterStatus);
+    campaignsToRender = campaignsToRender.filter(c => getDisplayStatus(c) === filterStatus);
   }
 
-  //  ترتيب ذكي — في جميع الحالات
   campaignsToRender.sort((a, b) => {
     const statusA = getDisplayStatus(a);
     const statusB = getDisplayStatus(b);
 
-    // إذا كان الفلتر "الكل"، نرتب حسب أولوية الحالة
     if (filterStatus === 'all') {
       const priority = { active: 1, scheduled: 2, ended: 3, pending: 4, completed: 5 };
-      if (priority[statusA] !== priority[statusB]) {
-        return priority[statusA] - priority[statusB];
+      if (priority[statusA] !== priority[statusB]) return priority[statusA] - priority[statusB];
+    }
+
+    // الترتيب الداخلي (مختصر للاختصار)
+    if (statusA === statusB) {
+      if (statusA === 'active') {
+        const rA = a.collectedAmount / (a.goal || 1);
+        const rB = b.collectedAmount / (b.goal || 1);
+        return Math.abs(rA - rB) > 0.001 ? rB - rA : (new Date(a.endDateRaw) - new Date()) - (new Date(b.endDateRaw) - new Date());
       }
+      return new Date(b.endDateRaw) - new Date(a.endDateRaw); // الأحدث أولاً عند الاستواء
     }
-
-    // الترتيب داخل نفس الفئة
-    if (statusA === 'active' && statusB === 'active') {
-      const ratioA = a.goal ? a.collectedAmount / a.goal : 0;
-      const ratioB = b.goal ? b.collectedAmount / b.goal : 0;
-      if (Math.abs(ratioA - ratioB) > 0.001) return ratioB - ratioA; // الأعلى نسبة أولًا
-      const daysA = Math.ceil((new Date(a.endDateRaw) - new Date()) / (1000 * 60 * 60 * 24));
-      const daysB = Math.ceil((new Date(b.endDateRaw) - new Date()) / (1000 * 60 * 60 * 24));
-      return daysA - daysB; // الأقصر مدة أولًا
-    }
-
-    if (statusA === 'scheduled' && statusB === 'scheduled') {
-      const startA = new Date(a.startDateRaw);
-      const startB = new Date(b.startDateRaw);
-      if (startA.getTime() !== startB.getTime()) return startA - startB; // الأقرب بداية أولًا
-      const durA = new Date(a.endDateRaw) - new Date(a.startDateRaw);
-      const durB = new Date(b.endDateRaw) - new Date(b.startDateRaw);
-      return durA - durB; // الأقصر مدة أولًا
-    }
-
-    if (statusA === 'ended' && statusB === 'ended') {
-      const ratioA = a.goal ? a.collectedAmount / a.goal : 0;
-      const ratioB = b.goal ? b.collectedAmount / b.goal : 0;
-      if (Math.abs(ratioA - ratioB) > 0.001) return ratioB - ratioA;
-      const durA = new Date(a.endDateRaw) - new Date(a.startDateRaw);
-      const durB = new Date(b.endDateRaw) - new Date(b.startDateRaw);
-      return durA - durB;
-    }
-
-    if (statusA === 'pending' && statusB === 'pending') {
-      const ratioA = a.goal ? a.collectedAmount / a.goal : 0;
-      const ratioB = b.goal ? b.collectedAmount / b.goal : 0;
-      if (Math.abs(ratioA - ratioB) > 0.001) return ratioB - ratioA;
-      const durA = new Date(a.endDateRaw) - new Date(a.startDateRaw);
-      const durB = new Date(b.endDateRaw) - new Date(b.startDateRaw);
-      return durA - durB;
-    }
-
-    if (statusA === 'completed' && statusB === 'completed') {
-      const endA = new Date(a.endDateRaw);
-      const endB = new Date(b.endDateRaw);
-      return endB - endA; // الأحدث انتهاءً أولًا
-    }
-
     return 0;
   });
 
-  // عرض البطاقات
   campaignsToRender.forEach(camp => {
     const displayStatus = getDisplayStatus(camp);
     const card = createCampaignCard(camp);
-    let targetContainer = null;
-    if (displayStatus === 'active') targetContainer = containers.active;
-    else if (displayStatus === 'scheduled') targetContainer = containers.scheduled;
-    else if (displayStatus === 'ended') targetContainer = containers.ended;
-    else if (displayStatus === 'completed') targetContainer = containers.completed;
-    else if (displayStatus === 'pending') targetContainer = containers.pending;
-
-    if (targetContainer) {
-      targetContainer.appendChild(card);
-    } else if (containers.active) {
-      containers.active.appendChild(card);
-    }
+    const target = containers[displayStatus] || containers.active;
+    if (target) target.appendChild(card);
   });
 }
 
@@ -254,6 +226,7 @@ function renderCampaigns(filterStatus = 'all') {
 function renderFilterBar() {
   const filterBar = document.createElement('div');
   filterBar.className = 'filter-bar';
+
   const buttons = [
     { text: 'الكل', status: 'all' },
     { text: 'النشطة', status: 'active' },
@@ -264,26 +237,24 @@ function renderFilterBar() {
   ];
 
   buttons.forEach(btn => {
-    const buttonEl = document.createElement('button');
-    buttonEl.textContent = btn.text;
-    buttonEl.dataset.status = btn.status;
-    if (btn.status === 'all') buttonEl.classList.add('active');
-    buttonEl.addEventListener('click', () => {
+    const el = document.createElement('button');
+    el.textContent = btn.text;
+    el.dataset.status = btn.status;
+    if (btn.status === 'all') el.classList.add('active');
+    el.addEventListener('click', () => {
       document.querySelectorAll('.filter-bar button').forEach(b => b.classList.remove('active'));
-      buttonEl.classList.add('active');
+      el.classList.add('active');
       renderCampaigns(btn.status);
     });
-    filterBar.appendChild(buttonEl);
+    filterBar.appendChild(el);
   });
 
   const main = document.querySelector('main');
-  const campaignsContainer = document.getElementById('campaignsContainer');
-  if (main && campaignsContainer) {
-    main.insertBefore(filterBar, campaignsContainer);
-  }
+  const container = document.getElementById('campaignsContainer');
+  if (main && container) main.insertBefore(filterBar, container);
 }
 
-// عرض التفاصيل
+// عرض التفاصيل (Modal)
 function showDetails(id) {
   const camp = campaignsData.find(c => c.id === id);
   if (!camp) return;
@@ -301,37 +272,46 @@ function showDetails(id) {
   document.getElementById('modalDesc').textContent = camp.description;
   document.querySelector('.modal-info').style.borderLeft = `6px solid ${statusInfo.color}`;
 
-  const modalDonateBtn = document.querySelector('.modal-donate-btn');
-  if (modalDonateBtn) {
-    if (!isAdmin) {
-      if (isDonatable) {
-        modalDonateBtn.innerHTML = `<a href="DonateNow.html?type=donation&campaign=${camp.id}" class="btn btn-primary">تبرع الآن</a>`;
-      } else {
-        modalDonateBtn.innerHTML = `<button class="btn btn-primary disabled" disabled>غير متاح</button>`;
-      }
+  const btnContainer = document.querySelector('.modal-donate-btn');
+  if (btnContainer) {
+    if (isAdmin) {
+      btnContainer.innerHTML = '';
+    } else if (isLoggedIn && isDonatable) {
+      btnContainer.innerHTML = `<a href="DonateNow.html?type=donation&campaign=${camp.id}" class="btn btn-primary">تبرع الآن</a>`;
     } else {
-      modalDonateBtn.innerHTML = '';
+      btnContainer.innerHTML = `<button class="btn btn-primary disabled" disabled>${isLoggedIn ? 'غير متاح' : 'سجّل دخولك أولًا'}</button>`;
     }
   }
 
   document.getElementById('detailModal').style.display = 'flex';
 }
 
-// حذف الحملة
+// حذف الحملة (مع حماية الواجهة — الحماية الحقيقية في الـ backend)
 async function deleteCampaign(id) {
+  if (!isAdmin) {
+    alert('⚠️ ليس لديك صلاحية حذف الحملات');
+    return;
+  }
   if (!confirm('هل أنت متأكد من حذف هذه الحملة؟')) return;
+
   try {
-    const res = await fetch(`/api/campaigns/${id}`, { method: 'DELETE' });
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const res = await fetch(`/api/campaigns/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
     if (res.ok) {
-      alert('تم حذف الحملة بنجاح');
+      alert('✅ تم حذف الحملة بنجاح');
       await fetchCampaigns();
       renderCampaigns();
     } else {
-      alert('فشل الحذف');
+      const data = await res.json();
+      alert('❌ فشل الحذف: ' + (data.message || 'غير معروف'));
     }
   } catch (err) {
     console.error(err);
-    alert('خطأ في الاتصال بالسيرفر');
+    alert('❌ خطأ في الاتصال بالسيرفر');
   }
 }
 
@@ -339,42 +319,51 @@ async function deleteCampaign(id) {
 function shareCampaign(id) {
   const camp = campaignsData.find(c => c.id === id);
   if (!camp) return;
-  const url = `${window.location.origin}/DonateNow.html?type=donation&campaign=${id}`;
-  const shareModal = document.createElement('div');
-  shareModal.className = 'modal-overlay';
-  shareModal.innerHTML = `
+  const url = `${window.location.origin}/campaigns.html`; // أو أضف query إذا أردت التوجيه المباشر للتبرع
+  const encodedUrl = encodeURIComponent(url + `#campaign-${id}`);
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
     <div class="modal-content">
       <button class="modal-close">&times;</button>
       <h3>مشاركة الحملة: ${camp.title}</h3>
       <div class="share-icons">
-        <a href="https://wa.me/?text=${encodeURIComponent(url)}"target="_blank"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}"target="_blank"><i class="fab fa-facebook"></i></a>
-        <button onclick="navigator.clipboard.writeText('${url}'); alert('تم نسخ الرابط');"><i class="fas fa-link"></i></button>
+        <a href="https://wa.me/?text=انضم لتبرع في حملة: ${encodeURIComponent(camp.title)}%0A${url}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${url}" target="_blank"><i class="fab fa-facebook"></i></a>
+        <button onclick="navigator.clipboard.writeText('${url}').then(() => alert('✓ تم النسخ'))"><i class="fas fa-link"></i></button>
       </div>
     </div>
   `;
-  document.body.appendChild(shareModal);
-  shareModal.style.display = 'flex';
-  shareModal.querySelector('.modal-close').addEventListener('click', () => shareModal.remove());
-  shareModal.addEventListener('click', (e) => { if (e.target === shareModal) shareModal.remove(); });
+  document.body.appendChild(modal);
+  modal.style.display = 'flex';
+  modal.querySelector('.modal-close').onclick = () => modal.remove();
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 }
 
-// عند تحميل الصفحة
+// ✅ عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', async () => {
-  if (isAdmin && document.getElementById('adminCreateBtn')) {
-    document.getElementById('adminCreateBtn').style.display = 'block';
+  // إظهار زر "إنشاء حملة" فقط للمدراء
+  const createBtn = document.getElementById('adminCreateBtn');
+  if (createBtn) {
+    createBtn.style.display = isAdmin ? 'block' : 'none';
   }
+
   await fetchCampaigns();
   renderFilterBar();
   renderCampaigns();
+
+  // إعداد Modal
   const modal = document.getElementById('detailModal');
-  if (modal) {
-    const closeBtn = document.querySelector('.modal-close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => modal.style.display = 'none');
-    }
-    modal.addEventListener('click', (e) => {
-      if (e.target.id === 'detailModal') modal.style.display = 'none';
-    });
+  const closeBtn = document.querySelector('.modal-close');
+  if (modal && closeBtn) {
+    closeBtn.onclick = () => modal.style.display = 'none';
+    modal.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+  }
+
+  // ✅ تحسين تجربة الزائر: إذا لم يسجّل دخول، أضف تحفيزًا
+  if (!isLoggedIn) {
+    const header = document.querySelector('.page-header p');
+    if (header) header.innerHTML += `<br><small class="text-muted">للتبرع، <a href="login.html" style="color:#3b82f6">سجّل دخولك</a> أو <a href="signup.html" style="color:#3b82f6">أنشئ حسابًا</a></small>`;
   }
 });

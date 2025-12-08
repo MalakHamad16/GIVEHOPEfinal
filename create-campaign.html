@@ -145,7 +145,27 @@
     </script>
 
     
-
+   <script>
+  // منع الوصول لغير المدراء
+  (function() {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) {
+      alert('⚠️ يجب تسجيل الدخول أولاً');
+      window.location.href = 'login.html';
+      return;
+    }
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.role !== 'admin') {
+        alert('❌ ليس لديك صلاحية إنشاء الحملات');
+        window.history.back();
+      }
+    } catch (e) {
+      alert('❌ جلسة غير صالحة. يرجى تسجيل الدخول مجددًا.');
+      window.location.href = 'login.html';
+    }
+  })();
+</script>
     
 
     <script src="create-campaign.js"></script>

@@ -75,7 +75,7 @@
   font-weight: 600;
 }
 
-/* ✅ === الأزرار: 3 أزرار محاذاة في سطر واحد، متناسقة وواضحة === */
+/*  === الأزرار: 3 أزرار محاذاة في سطر واحد، متناسقة وواضحة === */
 .card-actions {
   display: flex;
   justify-content: center;
@@ -121,7 +121,7 @@
   border-color: #0b5ed7;
 }
 
-/* ✅ زر المشاركة — مُحسّن ليكون بنفس "الارتفاع البصري" كالأزرار الأخرى */
+/*  زر المشاركة — مُحسّن ليكون بنفس "الارتفاع البصري" كالأزرار الأخرى */
 .card-actions .btn-share {
   width: 42px;
   height: 42px;
@@ -144,7 +144,7 @@
   transform: scale(1.08);
 }
 
-/* ✅ استجابة للجوال: لا نستخدم flex-direction: column إلا عند العرض < 360px */
+/*  استجابة للجوال: لا نستخدم flex-direction: column إلا عند العرض < 360px */
 @media (max-width: 576px) {
   .card-actions {
     flex-wrap: wrap;
@@ -221,7 +221,7 @@
 .status-badge.fully-sponsored { background: #2ecc71; }
 .status-badge.partially-sponsored { background: #e74c3c; }
 
-/* ✅ نافذة المشاركة (مُوحّدة) */
+/*  نافذة المشاركة (مُوحّدة) */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -277,7 +277,7 @@
 .share-icons a:hover,
 .share-icons button:hover { transform: scale(1.1); }
 
-/* ✅ استجابة للجوال */
+/*  استجابة للجوال */
 @media (max-width: 576px) {
   .card-actions {
     flex-direction: column;

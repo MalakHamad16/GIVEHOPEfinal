@@ -3,8 +3,8 @@ const { validationResult } = require('express-validator');
 const User = require('../models/User');
 
 // Generate JWT token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
 };
@@ -44,7 +44,7 @@ exports.signup = async (req, res) => {
     });
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.role); 
 
     res.status(201).json({
       success: true,
@@ -104,7 +104,7 @@ exports.login = async (req, res) => {
     }
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.role);
 
     res.status(200).json({
       success: true,
