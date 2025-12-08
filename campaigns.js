@@ -1,6 +1,6 @@
 // campaigns.js — النسخة النهائية المدعومة بالصلاحيات
 
-// ✅ دالة فك تشفير JWT (لقراءة role)
+//  دالة فك تشفير JWT (لقراءة role)
 function parseJwt(token) {
   if (!token) return null;
   try {
@@ -13,7 +13,7 @@ function parseJwt(token) {
   }
 }
 
-// ✅ جلب المستخدم الحالي (من localStorage/sessionStorage)
+//  جلب المستخدم الحالي (من localStorage/sessionStorage)
 function getCurrentUser() {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
   if (!token) return null;
@@ -31,7 +31,7 @@ function getCurrentUser() {
   };
 }
 
-// ✅ اشتقاق أذونات المستخدم
+//  اشتقاق أذونات المستخدم
 const currentUser = getCurrentUser();
 const isAdmin = currentUser?.role === 'admin';
 const isDonor = currentUser?.role === 'donor';
@@ -40,7 +40,7 @@ const isLoggedIn = !!currentUser;
 
 let campaignsData = [];
 
-// ✅ دالة مساعدة لتحويل رمز العملة
+//  دالة مساعدة لتحويل رمز العملة
 function getCurrencySymbol(code) {
   const symbols = { ILS: '₪', USD: '$', JOD: 'د.أ', AED: 'د.إ' };
   return symbols[code] || '₪';
@@ -91,13 +91,13 @@ function calculateDuration(startStr, endStr) {
   return `${Math.floor(diffDays / 365)} سنة`;
 }
 
-// ✅ إصلاح: استخدام camp.goal (ليس goalAmount)
+//  إصلاح: استخدام camp.goal (ليس goalAmount)
 function getDisplayStatus(camp) {
   const now = new Date();
   const start = new Date(camp.startDateRaw);
   const end = new Date(camp.endDateRaw);
   const collected = camp.collectedAmount || 0;
-  const goal = camp.goal || 1; // ← ✅ الصحيح
+  const goal = camp.goal || 1; // ←  الصحيح
 
   if (camp.status === 'pending') return 'pending';
   if (start > now) return 'scheduled';
@@ -116,7 +116,7 @@ function getStatusInfo(displayStatus) {
   return map[displayStatus] || { text: 'غير معروفة', color: '#5e4668ff' };
 }
 
-// ✅ إنشاء بطاقة الحملة — حسب الصلاحية
+//  إنشاء بطاقة الحملة — حسب الصلاحية
 function createCampaignCard(camp) {
   const displayStatus = getDisplayStatus(camp);
   const statusInfo = getStatusInfo(displayStatus);
@@ -194,25 +194,49 @@ function renderCampaigns(filterStatus = 'all') {
   }
 
   campaignsToRender.sort((a, b) => {
-    const statusA = getDisplayStatus(a);
-    const statusB = getDisplayStatus(b);
+  const statusA = getDisplayStatus(a);
+  const statusB = getDisplayStatus(b);
 
-    if (filterStatus === 'all') {
-      const priority = { active: 1, scheduled: 2, ended: 3, pending: 4, completed: 5 };
-      if (priority[statusA] !== priority[statusB]) return priority[statusA] - priority[statusB];
-    }
+  //  الأولوية بين الحالات
+  const priority = { active: 1, scheduled: 2, ended: 3, pending: 4, completed: 5 };
+  if (priority[statusA] !== priority[statusB]) {
+    return priority[statusA] - priority[statusB];
+  }
 
-    // الترتيب الداخلي (مختصر للاختصار)
-    if (statusA === statusB) {
-      if (statusA === 'active') {
-        const rA = a.collectedAmount / (a.goal || 1);
-        const rB = b.collectedAmount / (b.goal || 1);
-        return Math.abs(rA - rB) > 0.001 ? rB - rA : (new Date(a.endDateRaw) - new Date()) - (new Date(b.endDateRaw) - new Date());
-      }
-      return new Date(b.endDateRaw) - new Date(a.endDateRaw); // الأحدث أولاً عند الاستواء
-    }
-    return 0;
-  });
+  //  نفس الحالة → ترتيب داخلي
+  const now = new Date();
+
+  // دالة مساعدة: نسبة التبرع
+  const ratioA = a.goal ? (a.collectedAmount / a.goal) : 0;
+  const ratioB = b.goal ? (b.collectedAmount / b.goal) : 0;
+
+  // دالة مساعدة: مقارنة تواريخ الانتهاء (الأقرب أولًا = أقل قيمة)
+  const timeToEndA = new Date(a.endDateRaw).getTime() - now.getTime();
+  const timeToEndB = new Date(b.endDateRaw).getTime() - now.getTime();
+
+  // دالة مساعدة: مقارنة تواريخ البداية (للـ scheduled فقط)
+  const timeToStartA = new Date(a.startDateRaw).getTime() - now.getTime();
+  const timeToStartB = new Date(b.startDateRaw).getTime() - now.getTime();
+
+  switch (statusA) {
+    case 'active':
+    case 'ended':
+    case 'pending':
+      // أولاً: نسبة التبرع (الأعلى أولًا)
+      if (Math.abs(ratioA - ratioB) > 0.001) return ratioB - ratioA;
+      // ثانياً: الأقرب لانتهاء المدة (أقل timeToEnd أولًا)
+      return timeToEndA - timeToEndB;
+
+    case 'scheduled':
+      // فقط حسب تاريخ البداية: الأقرب أولًا
+      return timeToStartA - timeToStartB;
+
+    case 'completed':
+    default:
+      // المكتملة → لا ترتيب خاص (أو حسب الأحدث أولًا إن أردت)
+      return new Date(b.endDateRaw) - new Date(a.endDateRaw);
+  }
+});
 
   campaignsToRender.forEach(camp => {
     const displayStatus = getDisplayStatus(camp);
@@ -341,7 +365,7 @@ function shareCampaign(id) {
   modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 }
 
-// ✅ عند تحميل الصفحة
+//  عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', async () => {
   // إظهار زر "إنشاء حملة" فقط للمدراء
   const createBtn = document.getElementById('adminCreateBtn');
@@ -361,9 +385,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     modal.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
   }
 
-  // ✅ تحسين تجربة الزائر: إذا لم يسجّل دخول، أضف تحفيزًا
-  if (!isLoggedIn) {
-    const header = document.querySelector('.page-header p');
-    if (header) header.innerHTML += `<br><small class="text-muted">للتبرع، <a href="login.html" style="color:#3b82f6">سجّل دخولك</a> أو <a href="signup.html" style="color:#3b82f6">أنشئ حسابًا</a></small>`;
-  }
+  
 });

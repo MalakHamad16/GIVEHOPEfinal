@@ -131,13 +131,21 @@ function displayCase(caseItem) {
     }
 
   } else {
-    // غير مكفولة → مفتوح للجميع
+  // غير مكفولة → يُفعّل فقط للمستخدم المسجّل
+  if (currentUser && currentUser.id) {
     sponsorLink.href = `DonateNow.html?type=sponsor&id=${caseItem._id}`;
     sponsorLink.classList.remove("disabled");
     sponsorLink.style.opacity = "1";
     sponsorLink.style.pointerEvents = "auto";
     sponsorLink.innerHTML = '<i class="fas fa-hands-helping"></i> اكفل الآن';
+  } else {
+    sponsorLink.classList.add("disabled");
+    sponsorLink.style.opacity = "0.6";
+    sponsorLink.style.pointerEvents = "none";
+    sponsorLink.href = "javascript:void(0)";
+    sponsorLink.innerHTML = '<i class="fas fa-lock"></i> سجّل دخولك أولًا';
   }
+}
 }
 
 function showError(msg) {
