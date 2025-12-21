@@ -114,36 +114,42 @@ function createCampaignCard(camp) {
   const statusInfo = getStatusInfo(displayStatus);
   const isDonatable = displayStatus === "active";
   let buttonsHtml = "";
-  if (isAdmin) {
-    // أزرار المدير
-    buttonsHtml = `
-      <a href="edit-campaign.html?id=${camp.id}" class="btn btn-admin-edit">تعديل</a>
-      <button class="btn btn-admin-delete" onclick="deleteCampaign('${camp.id}')">حذف</button>
-      <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
-      <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
-    `;
-  } else {
-    // غير المدير (متبرع أو محتاج أو زائر)
-    if (isLoggedIn && isDonatable) {
+if (isAdmin) {
+  // أزرار المدير كما هي
+  buttonsHtml = `
+    <a href="edit-campaign.html?id=${camp.id}" class="btn btn-admin-edit">تعديل</a>
+    <button class="btn btn-admin-delete" onclick="deleteCampaign('${camp.id}')">حذف</button>
+    <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
+    <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
+  `;
+} else {
+  // غير المدير
+  if (isLoggedIn) {
+    if (displayStatus === "active") {
+      // مسجل وحملة نشطة → زر التبرع مفعل
       buttonsHtml = `
         <a href="DonateNow.html?type=donation&campaign=${camp.id}" class="btn btn-primary">تبرع الآن</a>
         <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
         <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
       `;
     } else {
+      // مسجل وحملة غير نشطة → زر معطل فقط
       buttonsHtml = `
-        <button class="btn btn-login-prompt">${
-          isLoggedIn ? "غير متاح" : "سجّل دخولك أولًا"
-        }</button>
-        <button class="btn btn-outline" onclick="showDetails('${
-          camp.id
-        }')">عرض التفاصيل</button>
-        <button class="btn-share" onclick="shareCampaign('${
-          camp.id
-        }')"><i class="fas fa-share-alt"></i></button>
+        <button class="btn btn-disabled">غير متاح</button>
+        <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
+        <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
       `;
     }
+  } else {
+    // زائر → زر التوجيه لتسجيل الدخول
+    buttonsHtml = `
+      <button class="btn btn-login-prompt">سجّل دخولك أولًا</button>
+      <button class="btn btn-outline" onclick="showDetails('${camp.id}')">عرض التفاصيل</button>
+      <button class="btn-share" onclick="shareCampaign('${camp.id}')"><i class="fas fa-share-alt"></i></button>
+    `;
   }
+}
+
   const card = document.createElement("div");
   // ✅ إضافة data-camp-id و data-title لتسهيل البحث
   card.className = "campaign-card";

@@ -1,6 +1,3 @@
-
-
-
 // دالة تحميل HTML
 async function loadHTML(file, elementId) {
     try {
@@ -78,6 +75,8 @@ window.addEventListener('DOMContentLoaded', function() {
     loadHTML('navbar.html', 'navbar-placeholder');
     loadHTML('footer.html', 'footer-placeholder');
 });
+
+
       
       //************************************************************************************************/
         // بيانات الأسئلة والأجوبة
@@ -347,6 +346,41 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
+// دالة لتحديد إذا كانت الحالة عاجلة - نفس الدالة في ShowAllCasess.js
+function isUrgent(deadline) {
+    if (!deadline) return false;
+    
+    try {
+        let deadlineDate;
+        
+        if (deadline instanceof Date) {
+            deadlineDate = new Date(deadline);
+        } else if (typeof deadline === 'string') {
+            const dateStr = deadline.split('T')[0]; 
+            const [year, month, day] = dateStr.split('-').map(Number);
+            deadlineDate = new Date(year, month - 1, day);
+        } else {
+            deadlineDate = new Date(deadline);
+        }
+        
+        if (isNaN(deadlineDate.getTime())) {
+            return false;
+        }
+        
+        const today = new Date();
+        const todayLocal = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        
+        const deadlineLocal = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate());
+        
+        const diffTime = deadlineLocal - todayLocal;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        return diffDays <= 20 && diffDays >= 0;
+    } catch (error) {
+        console.error('Error calculating urgency:', error);
+        return false;
+    }
+}
 
 
 
@@ -355,40 +389,64 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-        document.addEventListener("DOMContentLoaded", () => {
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
-    const caseId = parseInt(params.get("id"));
-document.querySelector(".donate-button").setAttribute("href", `DonateNow.html?id=${caseId}`);
-    fetch("cases.json")
-        .then(res => res.json())
-        .then(cases => {
-            const c = cases.find(item => item.id === caseId);
-            if (!c) return;
+    const caseId = params.get("id");  // الآن string (لـ _id)
 
-            document.getElementById("caseTitle").textContent = `حالة رقم ${c.id} - ${c.title}`;
+    if (!caseId) {
+        console.error('No case ID provided');
+        return;
+    }
+
+    document.querySelector(".donate-button").setAttribute("href", `DonateNow.html?id=${caseId}`);
+
+    fetch(`/api/casedetails/${caseId}`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status}`);
+            }
+            return res.json();
+        })   
+
+        .then(c => {
+        
+const urgent = isUrgent(c.deadline);
+
+const titleText = urgent
+  ? `<span style="color: #ff4444;"> حالة عاجلة</span> - ${c.title} 🚨`
+  : ` حالة - ${c.title}`;
+
+document.getElementById("caseTitle").innerHTML = titleText;
+
+
+
             document.getElementById("caseImage").src = c.image;
-            document.getElementById("totalAmount").textContent = `${c.total} د.إ`;
-            document.getElementById("donatedAmount").textContent = `${c.donated} د.إ`;
-            document.getElementById("remainingAmount").textContent = `${c.total - c.donated} د.إ`;
+            document.getElementById("totalAmount").textContent = `${c.total} ₪`;
+            document.getElementById("donatedAmount").textContent = `${c.donated} ₪`;
+            document.getElementById("remainingAmount").textContent = `${c.total - c.donated} ₪`;
             document.getElementById("donationsCount").textContent = `${c.donationsCount} عمليات`;
             document.getElementById("publishDate").textContent = c.publishDate;
             document.getElementById("deadline").textContent = c.deadline;
             document.getElementById("caseDescription").textContent = c.description;
-            document.getElementById("otherDescription").textContent = c.otherDescription ;
+            document.getElementById("otherDescription").textContent = c.otherDescription;
             document.getElementById("caseType").textContent = getTypeName(c.type);
-
-
 
             // البروجريس بار
             const percent = Math.floor((c.donated / c.total) * 100);
-            document.getElementById("progressBar").style.width = percent + "%";
+            document.getElementById("progressBar").style.width = `${percent}%`;
             document.getElementById("progressText").textContent = `${percent}% مكتمل`;
-
-
+        })
+        .catch(error => {
+            console.error('Error fetching case details:', error);
         });
-
-
-        
 });
 
 

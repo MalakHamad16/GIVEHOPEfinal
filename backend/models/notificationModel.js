@@ -41,6 +41,15 @@ const notificationSchema = new mongoose.Schema(
         "campaign_ended",
         "campaign_donation",
         "donation_approved",
+
+        // ← إضافات جديدة لدعم الكفالات (Sponsorships)
+        "sponsorship_request_approved",
+        "sponsorship_started",
+        "sponsorship_payment",
+        "sponsorship_payment_reminder",
+        "sponsorship_payment_delayed",
+        "sponsorship_delayed_payment",
+        "sponsorship_completed",
       ],
       required: true,
     },

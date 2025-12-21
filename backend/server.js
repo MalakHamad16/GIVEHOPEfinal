@@ -7,18 +7,24 @@ const path = require('path');
 const multer = require('multer');
 
 dotenv.config();
+
 const app = express();
 
+// ================================
 // Middlewares عامة
+// ================================
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// خدمة الملفات الثابتة
-app.use(express.static(path.join(__dirname, '../')));
+// ✅ Static files — آمنة ومحددة
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+app.use('/public/sponsor', express.static(path.join(__dirname, '../public/sponsor')));
 
-// إعداد multer لرفع الصور
+
+// ================================
+// Multer setup — لرفع الصور
+// ================================
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, '../public/uploads'));
@@ -27,54 +33,106 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + '-' + file.originalname);
   }
 });
-const upload = multer({ storage });
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|webp/;
+    const ext = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimeType = allowedTypes.test(file.mimetype);
+    if (ext && mimeType) return cb(null, true);
+    cb(new Error('Only JPEG, JPG, PNG, WEBP allowed'));
+  }
+});
 
-// Routes for complaints
-const complaintRoutes = require('./api/complaints');
-app.use('/api/complaints', complaintRoutes);
-// Routes for zakat
-const zakatRoutes = require('./api/zakat');
-app.use('/api/zakat', zakatRoutes);
+// ================================
+// Routes — ✅ جميعها مضبوطة ومُفعَّلة
+// ================================
 
-//Routes for auth
+// ✅ Authentication
 const authRoutes = require('./api/authRoutes');
 app.use('/api/auth', authRoutes);
 
-//Routes for users
+// ✅ Users
 const userRoutes = require('./api/userRoutes');
 app.use('/api/users', userRoutes);
 
-//Routes for donation requests
-const donationRequestRoutes = require('./api/donationRequestRoutes');
+// ✅ Donation Requests (ملاحظة: الاسم الصحيح — لا يحتوي typo)
+const donationRequestRoutes = require('./api/donationRequestRoutes'); // 
 app.use('/api/donation-requests', donationRequestRoutes);
 
-// Routes for approved sponsorships
-const sponsorshipRoutes = require('./api/sponsorshipRoutes');
-app.use('/api/sponsorships', sponsorshipRoutes);
-//sponsor pictures
-app.use('/public/sponsor', express.static(path.join(__dirname, '../public/sponsor')));
-//Routes for donation payments
+// ✅ Donation (تبرعات مباشرة)
+const donationRoutes = require('./api/donationRoutes');
+app.use('/api/donations', donationRoutes); // ← مسار منطقي: /api/donations
+
+// ✅ Donation Payments (دفعات إدارية/مخصصة)
 const donationPaymentRoutes = require('./api/donationPaymentRoutes');
 app.use('/api/donation-payments', donationPaymentRoutes);
 
-// ✅ routes الحملات مع دعم الصور في POST و PUT
-const campaignController = require('./controllers/campaignController');
-app.get('/api/campaigns', campaignController.getAllCampaigns);
-app.get('/api/campaigns/:id', campaignController.getCampaignById);
-app.post('/api/campaigns', upload.single('image'), campaignController.createCampaign);
-app.put('/api/campaigns/:id', upload.single('image'), campaignController.updateCampaign); // ✅ مضاف
-app.delete('/api/campaigns/:id', campaignController.deleteCampaign);
+// ✅ Campaigns — ✅ باستخدام routes جاهزة + middleware الأمان
+const campaignRoutes = require('./api/campaignRoutes');
+app.use('/api/campaigns', campaignRoutes);
 
-// الاتصال بقاعدة البيانات
-mongoose.connect('mongodb://localhost:27017/givehope', {
+// ✅ Sponsorships
+const sponsorshipRoutes = require('./api/sponsorshipRoutes');
+app.use('/api/sponsorships', sponsorshipRoutes);
+
+// ✅ Cases (ShowAllCasess)
+const casesRoutes = require('./api/ShowAllCasessroute');
+app.use('/api/cases', casesRoutes); // ← استخدام مسار منطقي: /api/cases
+
+// ✅ Case Details (مع route واحد فقط)
+const caseDetailsRoutes = require('./api/casedetailsroute');
+app.use('/api/case', caseDetailsRoutes); // GET /api/case/:id
+
+// ✅ Stories
+const storiesRoutes = require('./api/storiesroute');
+app.use('/api/stories', storiesRoutes);
+
+// ✅ Complaints
+const complaintRoutes = require('./api/complaints');
+app.use('/api/complaints', complaintRoutes);
+
+// ✅ Zakat
+const zakatRoutes = require('./api/zakat');
+app.use('/api/zakat', zakatRoutes);
+const zakatRatesRoutes = require('./api/zakatRates');
+app.use('/api/zakat', zakatRatesRoutes); // GET /api/zakat/rates
+
+// ✅ Homepage stats & urgent cases
+const homePageRoutes = require('./api/HomePageroute');
+app.use('/api/home', homePageRoutes); // GET /api/home/stats, /api/home/urgent-cases, ...
+
+// ✅ Notifications — مُفعَّلة الآن ✅
+const notificationRoutes = require('./api/notifications');
+app.use('/api/notifications', notificationRoutes);
+
+// ================================
+// Database Connection
+// ================================
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/givehope', {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
-  .then(() => console.log('✅ تم الاتصال بقاعدة البيانات بنجاح'))
-  .catch(err => console.error('❌ خطأ في الاتصال بقاعدة البيانات:', err));
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
 
-// تشغيل السيرفر
+// ================================
+// Error Handling Middleware
+// ================================
+app.use((req, res, next) => {
+  res.status(404).json({ success: false, message: 'Route not found' });
+});
+
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ success: false, message: 'Internal server error' });
+});
+
+// ================================
+// Start Server
+// ================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

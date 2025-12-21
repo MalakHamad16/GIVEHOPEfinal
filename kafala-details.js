@@ -68,9 +68,7 @@ function displayCase(caseItem) {
   document.getElementById("duration").textContent = caseItem.durationLabel;
   document.getElementById("city").textContent = caseItem.city;
   
-  document.getElementById("endDate").textContent = 
-    new Date(caseItem.preferredSponsorshipDeadline)
-      .toLocaleDateString("ar-EG", { day: "numeric", month: "long", year: "numeric" });
+  
   
   //  عرض عدد الفترات المدفوعة
   document.getElementById("paidPeriods").textContent = caseItem.paidPeriods || 0;

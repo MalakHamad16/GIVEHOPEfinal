@@ -1,5 +1,3 @@
-
-
     :root {
             --primary-color: #3B82F6;
             --secondary-color: #2563EB;
@@ -360,6 +358,19 @@
     display: block;
 }
 
+ /* .urgent-label {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--danger-color);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+        } */
+        
 .modal-dialog {
     position: relative;
     width: auto;

@@ -1,3 +1,4 @@
+//backend/api/userRoutes.js
 const express = require('express');
 const { body } = require('express-validator');
 const { updateProfile, getProfile, updateGoal } = require('../controllers/userController');

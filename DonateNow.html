@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -71,16 +69,16 @@
             <div class="donor-info-column">
                 <h3 class="section-title">المعلومات الشخصية</h3>
                 <label for="name">الاسم الكامل</label>
-                <input type="text" id="name" placeholder="أدخل اسمك بالكامل" required>
+                <input type="text" id="name" autocomplete="name" placeholder="أدخل اسمك بالكامل" required>
 
                 <label for="email">البريد الإلكتروني</label>
-                <input type="email" id="email" placeholder="example@gmail.com"
+                <input type="email" id="email" autocomplete="email" placeholder="example@gmail.com"
                    pattern="^[^@\s]+@[^@\s]+\.com$" 
                  title="الرجاء إدخال بريد إلكتروني صالح مثل example@gmail.com"
                  required>
 
                 <label for="phone">رقم الهاتف</label>
-                <input type="tel" id="phone" placeholder="059123456" 
+                <input type="tel" id="phone" autocomplete="tel" placeholder="059123456" 
                  title="الرجاء إدخال أرقام فقط" pattern="[0-9]+"  required>
 
                 <label for="idcard">رقم الهوية</label>
@@ -88,15 +86,15 @@
                  title="الرجاء إدخال أرقام فقط"  pattern="[0-9]+" required >
 
                 <div class="checkbox-inline">
-                    <input type="checkbox" id="anonymous" checked>
+                    <input type="checkbox" id="anonymous" >
                     <label for="anonymous" class="mylabel">التبرع بشكل مجهول</label>
                 </div>
                 
                   <!-- مؤشر التبرعات -->
        <div class="progress-container">
             <div class="progress-info">
-                <span id="totalAmount">د.أ</span>
-                <span id="donatedAmount">د.أ</span>
+                <span id="totalAmount">₪</span>
+                <span id="donatedAmount">₪</span>
             </div>
             <div class="progress-wrapper">
                 <div class="progress-bar" id="progressBar" style="width: 0%;">

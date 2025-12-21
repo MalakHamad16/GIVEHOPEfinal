@@ -1,5 +1,3 @@
-
-
 // وظيفة لتحميل HTML
 async function loadHTML(file, elementId) {
     try {
@@ -82,23 +80,38 @@ function initNavbar() {
     });
 }
 
+
+
 // وظيفة لتحديد ما إذا كانت الحالة عاجلة بناءً على الموعد النهائي
-function isUrgent (deadline) {
+function isUrgent(deadline) {
     if (!deadline) return false;
     
     try {
-        // تحويل تاريخ الموعد النهائي إلى كائن تاريخ
-        const [day, month, year] = deadline.split('-').map(Number);
-        const deadlineDate = new Date(year, month - 1, day); // الشهر يبدأ من 0 في JavaScript
+        let deadlineDate;
         
-        // تاريخ اليوم
+        if (deadline instanceof Date) {
+            deadlineDate = new Date(deadline);
+        } else if (typeof deadline === 'string') {
+           
+            const dateStr = deadline.split('T')[0]; 
+            const [year, month, day] = dateStr.split('-').map(Number);
+            deadlineDate = new Date(year, month - 1, day);
+        } else {
+            deadlineDate = new Date(deadline);
+        }
+        
+        if (isNaN(deadlineDate.getTime())) {
+            return false;
+        }
+        
         const today = new Date();
+        const todayLocal = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         
-        // حساب الفرق بالأيام
-        const diffTime = deadlineDate - today;
+        const deadlineLocal = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate());
+        
+        const diffTime = deadlineLocal - todayLocal;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
-        // إذا كان الموعد النهائي خلال أسبوعين أو أقل، تعتبر الحالة عاجلة
         return diffDays <= 20 && diffDays >= 0;
     } catch (error) {
         console.error('Error calculating urgency:', error);
@@ -106,7 +119,6 @@ function isUrgent (deadline) {
     }
 }
 
-// وظيفة للحصول على اسم النوع بالعربية
 function getTypeName(type) {
     const typeNames = {
         "health": "صحية",
@@ -117,6 +129,34 @@ function getTypeName(type) {
     };
     return typeNames[type] || "أخرى";
 }
+
+
+// دالة لفتح صفحة التفاصيل
+function openCaseDetails(caseId) {
+    console.log('Opening case details for ID:', caseId);
+    
+    if (!caseId || caseId === 'undefined' || caseId === 'null') {
+        console.error('Invalid case ID:', caseId);
+        alert('خطأ في تحميل الحالة: لم يتم تحديد معرف الحالة');
+        return;
+    }
+    
+    window.location.href = `casedetails.html?id=${caseId}`;
+}
+
+// دالة لفتح صفحة التبرع
+function openDonationPage(caseId) {
+    console.log('Opening donation page for ID:', caseId);
+    
+    if (!caseId || caseId === 'undefined' || caseId === 'null') {
+        console.error('Invalid case ID for donation:', caseId);
+        alert('خطأ في فتح صفحة التبرع');
+        return;
+    }
+    
+    window.location.href = `DonateNow.html?id=${caseId}`;
+}
+
 // وظيفة لتحميل الحالات وعرضها
 async function loadCases() {
     const container = document.getElementById("casesContainer");
@@ -128,54 +168,76 @@ async function loadCases() {
     container.innerHTML = '<div class="loading">جاري تحميل الحالات...</div>';
     
     try {
-        const res = await fetch("cases.json");
+        const res = await fetch("api/ShowAllCases");
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const casesData = await res.json();
+       const responseJson = await res.json();
+        
+        console.log("API Response:", responseJson);
+        const casesData = responseJson.data || responseJson; 
 
-        // مسح رسالة التحميل
         container.innerHTML = '';
         
-        // إذا لم تكن هناك حالات
         if (!casesData || casesData.length === 0) {
-            container.innerHTML = '<div class="no-cases">لا توجد حالات متاحة حالياً</div>';
+            container.innerHTML = '<div class="no-cases" style="background-color: wheit;">لا توجد حالات متاحة حالياً</div>';
             return;
         }
 
+
+function formatDateForDisplay(dateString) {
+    if (!dateString) return '';
+    
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+        
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}`;
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return '';
+    }
+}
+
    casesData.forEach(c => {
-    // استخدم اسم مختلف عشان ما يتعارض مع الدالة
     const urgent = isUrgent(c.deadline);
+    const formattedDeadline = formatDateForDisplay(c.deadline);
 
     const remaining = c.total - c.donated;
     const percent = Math.floor((c.donated / c.total) * 100);
 
+ const caseId = c._id || c.id;
+
     const card = document.createElement("div");
-    card.className = "case";
+    card.className = "case"; 
     card.setAttribute("data-type", c.type);
     card.setAttribute("data-urgent", urgent);
     card.setAttribute("data-total", c.total);
     card.setAttribute("data-donated", c.donated);
     card.setAttribute("data-remaining", remaining);
-    card.setAttribute("data-id", c.id);
+    card.setAttribute("data-id", caseId);
 
     card.innerHTML = `
         ${urgent ? '<span class="urgent-label">عاجل</span>' : ""}
         <span class="case-badge ${c.type}-badge">${getTypeName(c.type)}</span>
         <img src="${c.image}" alt="صورة الحالة" class="case-image" onerror="this.src='images/default-case.jpg'">
         <div class="case-content">
-            <h3>${c.title}</h3>
-            <p>المبلغ المطلوب: ${c.total} د.أ</p>
-            <p>المبلغ المتبقي: <span class="remaining">${remaining}</span> د.أ</p>
+            <h3>${c.title}</h3> 
+            <p>المبلغ المطلوب: ${c.total} ₪ </p>
+            <p>المبلغ المتبقي: <span class="remaining">${remaining}</span> ₪ </p>
             <div class="progress-container">
                 <div class="progress-bar" style="width:${percent}%;"></div>
             </div>
             <p>نسبة الإنجاز: <span class="percentage">${percent}%</span></p>
-            <p class="deadline">الموعد النهائي: ${c.deadline}</p>
+            <p class="deadline">الموعد النهائي: ${formattedDeadline}</p>
             
             <div class="case-actions">
-                <button class="btn-donate" onclick="window.location.href='DonateNow.html?id=${c.id}'">
+                <button class="btn-donate" onclick="window.location.href='DonateNow.html?id=${caseId}'">
                     <i class="fas fa-hand-holding-heart"></i> تبرع الآن
                 </button>
-                <button class="btn-details" onclick="window.location.href='casedetails.html?id=${c.id}'">
+                <button class="btn-details" onclick="window.location.href='casedetails.html?id=${caseId}'">
                     <i class="fas fa-eye"></i> التفاصيل
                 </button>
             </div>

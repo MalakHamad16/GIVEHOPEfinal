@@ -1,3 +1,4 @@
+//backend/api/authRoutes.js
 const express = require('express');
 const { body } = require('express-validator');
 const { signup, login, getMe } = require('../controllers/authController');

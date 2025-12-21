@@ -1,6 +1,4 @@
-
-
-// دوال تحميل HTML وتهيئة شريط التنقل (تم الإبقاء عليها كما هي)
+// دوال تحميل HTML وتهيئة شريط التنقل
 async function loadHTML(file, elementId) {
     try {
         const response = await fetch(file);
@@ -75,101 +73,60 @@ window.addEventListener('DOMContentLoaded', function() {
     loadHTML('navbar.html', 'navbar-placeholder');
     loadHTML('footer.html', 'footer-placeholder');
 });
- 
-//*********************************************************************************************************/
-
-// بيانات القصص الكاملة
-const stories = {
-   1: {
-    title: "قصه ليلى",
-    type: "مستفيد",
-    category: "مشاريع خيرية",
-    time: "",
-    image: "images/food.jpg",
-    content: `
-        <p>أنا ليلى، أم لأربعة أطفال، وكنا نعيش ظروف صعبة جدًا بعد فقدان زوجي لوظيفته. لم يكن لدينا القدرة على توفير الاحتياجات الأساسية اليومية، وكنت أخشى على مستقبل أولادي.</p>
-        <p>سجلنا في مشروع دعم الأسر المحتاجة، وبفضل التبرعات والدعم الذي وصلنا، تمكنا من الحصول على سلال غذائية وأدوات مدرسية للأطفال، بالإضافة إلى دعم بسيط لتغطية الاحتياجات المنزلية.</p>
-        <p>هذا المشروع لم يوفر لنا المواد فقط، بل أعاد لنا الأمل ورفع معنوياتنا. أشعر الآن بالطمأنينة لأن أولادي قادرون على متابعة دراستهم وأحسست أننا لسنا وحدنا.</p>
-        <p>تجربتي أثبتت لي أن الدعم في الوقت المناسب قادر على تغيير حياة أسرة كاملة ومنحنا فرصة لمستقبل أفضل.</p>
-    `
-},
-
-    2: {
-        title: "قصه محمد",
-        category: "صحيه",
-        type: "مستفيد" ,
-        time:"",
-        image: "images/heartt.PNG",
-        content:`<p>كنت أعاني من مرض بالقلب وكان لا بد من إجراء عملية جراحية عاجلة. الأطباء أخبروا عائلتي أن أي تأخير قد يشكل خطرًا على حياتي، لكن تكلفة العملية كانت أكبر من قدرة أسرتي المادية.</p>
-<p>بعد محاولات كثيرة، تواصلت عائلتي مع منظمة GiveHope، وبفضل التبرعات التي وصلتنا تمكنا من جمع المبلغ المطلوب بسرعة، وتمت العملية في مستشفى متخصص بنجاح.</p>
-<p>تقول والدتي: "لم نكن نعرف كيف سننقذ حياة محمد، لكن دعم الناس أعطانا أملًا جديدًا."</p>
-<p>الآن أنا أتعافى بشكل جيد وأتابع جلسات المراجعة الطبية بانتظام. أحلم أن أصبح مهندسًا في المستقبل حتى أستطيع أن أقدم شيئًا لمجتمعي كما قدموا لي. عائلتي لا تزال تتذكر دعمكم في أصعب الأوقات.</p>
-<p>هذه التجربة أثبتت لنا أن الدعم في الوقت المناسب قادر فعلاً على إنقاذ حياة وتغيير مستقبل عائلة بأكملها.</p>
-`
-    },
-    3: {
-        title: "قصه عائلة أبو محمد ",
-        category: "معيشية",
-        type: "مستفيد" ,
-        time: "",
-        image: "images/newhouse.jpg",
-        content: `
-            <p>أنا أبو محمد، قبل فترة بيتنا صار فيه حريق كبير وأكل كل شي تقريبًا. فجأة أنا وولادي الستة لقينا حالنا بلا مأوى ولا حتى أغراض نستر حالنا فيها.</p>
-            <p>بمساعدة الجيران ضلّينا كم يوم عند قرايبنا، بس الوضع ما كان سهل، كنا محتاجين ندبّر حالنا من أول وجديد. بهديك الفترة سمعنا عن GiveHope وتواصلنا معهم. بصراحة ما توقعت إنه رح يوقفوا معنا بهالشكل. بفضل التبرعات قدرنا نأمن بيت نرجع نعيش فيه ونشتري الأساسيات اللي راحت بالحريق.</p>
-            <p>أنا شخصيًا بقول: "خسرت كل شي بهديك الليلة، بس وقفة الناس معنا رجّعتلي الأمل من جديد. حسيت إنه لسه في خير بالدنيا."</p>
-            <p>بعد أشهر تعب وجهد، رجعنا على بيت جديد. بالنسبة إلنا ما كان بس جدران وسقف، كان بداية جديدة وحياة أهدى وأأمن.</p>
-            <p>اليوم الحمد لله مستقرين، وحتى صرنا نساعد عائلات ثانية محتاجة من خلال GiveHope، يمكن نرد جزء من المعروف اللي شفناه.</p>
-            <p>تجربتي علمتني إنه بالشدّة بيبين معدن الناس، وإنه دايمًا في مجال نرجع نوقف على رجلينا إذا لقينا مين يمدلنا إيده.</p>
-        `
-    },
-    4: {
-        title:"قصه ساره ",
-        category: "كفالة تعليمية",
-        type: "مستفيد" ,
-        time: "",
-        image: "images/university.jpg",
-        content: `
-            <p>أنا سارة، كنت دايمًا أحلم أكمل دراستي الجامعية بس ظروف عائلتي المالية كانت صعبة جدًا. كنت خايفة إني أضطر أترك الدراسة.</p>
-            <p>سمعت عن GiveHope وتقدمت بطلب للكفالة التعليمية. الحمد لله، المتبرعين ساعدوني أكمل دراستي بدون أي قلق عن المصاريف.</p>
-            <p>اليوم أنا طالبة جامعية متفوقة وبستعد لأكون معلمة لمساعدة الطلاب اللي زيي. دعم الناس خلاني أقدر أحقق حلمي وأفكر أساعد غيري بعدين.</p>
-        `
-    },
-    5: {
-        title: "قصة خالد",
-        category: "مشاريع",
-        type: "متبرع",
-        time: "",
-        image: "https://randomuser.me/api/portraits/men/75.jpg",
-        content: `
-            <p>كمتبرع ل احدى المشاريع التي تم تنظيمها هنا ، أشعر بسعادة غامرة عندما أرى تأثير تبرعاتي على أرض الواقع.</p>
-            <p>GiveHope توفر لي تقارير دورية عن الحالات التي ساهمت في مساعدتها، مما يعطيني الثقة في أن تبرعاتي تصل لمستحقيها.</p>
-            <p>هذه التجربة جعلتني أكثر التزامًا بالاستمرار في العطاء، وأدركت أن كل مساهمة صغيرة قد تصنع فارقًا كبيرًا في حياة الآخرين.</p>
-        `
-    },
-};
 
 //*********************************************************************************************************/
 // دوال مساعدة
 //*********************************************************************************************************/
-
-function getExcerpt(content) {
-    const match = content.match(/<p>(.*?)<\/p>/);
-    return match ? match[1] : "";
+function getExcerpt(content, maxLength = 150) {
+    try {
+        if (!content) return "اقرأ القصة كاملة...";
+        
+        // استخراج النص الخام من HTML
+        const textOnly = content
+            .replace(/<[^>]*>/g, ' ') // إزالة HTML tags
+            .replace(/\s+/g, ' ')     // تحويل المسافات المتعددة إلى واحدة
+            .replace(/&nbsp;/g, ' ')  // إزالة المسافات غير المنقسمة
+            .trim();
+        
+        if (textOnly.length <= maxLength) {
+            return textOnly;
+        }
+        
+        // قص النص مع الحفاظ على آخر كلمة كاملة
+        const truncated = textOnly.substr(0, maxLength);
+        return truncated.substr(0, truncated.lastIndexOf(' ')) + '...';
+        
+    } catch (error) {
+        console.error('خطأ في استخلاص المقتطف:', error);
+        return "اقرأ القصة كاملة...";
+    }
 }
 
 function calculateReadingTime(content) {
-    const paragraphs = content.match(/<p>.*?<\/p>/g) || [];
-    const minutes = Math.ceil(paragraphs.length * 0.5); // كل فقرة ≈ نصف دقيقة
-    return `${minutes} دقائق قراءة`;
+    try {
+        // استخراج النص من HTML إذا كان موجوداً
+        let textContent = content;
+        if (content.includes('<')) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            textContent = tempDiv.textContent || tempDiv.innerText || '';
+        }
+        
+        // حساب الكلمات
+        const words = textContent.trim().split(/\s+/).filter(word => word.length > 0).length;
+        const readingTimeMinutes = Math.max(1, Math.ceil(words / 200));
+        
+        return `${readingTimeMinutes} دقائق قراءة`;
+    } catch (error) {
+        console.error('خطأ في حساب وقت القراءة:', error);
+        return '1 دقائق قراءة';
+    }
 }
 
-// دالة توجيه النص
 function autoDirection(inputElement) {
     if (!inputElement) return;
-    
     inputElement.addEventListener("input", function() {
         const value = this.value.trim();
-
         if (/^[\u0600-\u06FF]/.test(value)) {
             this.style.direction = "rtl";
             this.style.textAlign = "right";
@@ -184,97 +141,215 @@ function autoDirection(inputElement) {
 }
 
 //*********************************************************************************************************/
-// منطق تعبئة بطاقات القصص
+// دالة جديدة: تحديد الصورة تلقائياً حسب الحالة (الفئة)
 //*********************************************************************************************************/
 
-document.querySelectorAll(".story-card").forEach(card => {
-    const id = card.querySelector(".read-more").dataset.story; 
-    const story = stories[id];
-    if (story) {
-        // عنوان القصة
-        const titleElem = card.querySelector("h3");
-        if(titleElem) titleElem.textContent = story.title;
+function getCategoryImage(category) {
+    const categoryImages = {
+        'صحية': 'images/dr.jpg',
+        'تعليمية': 'images/university.jpg',
+        'معيشية': 'images/live.PNG',
+        'رعاية أيتام': 'images/ايتام.jpg',
+        'طوارئ': 'images/student.jpg',
+        'مشاريع': 'images/d2b45620-ede8-46e7-8fb0-6220891f8828.jpg',
+        'كفالات': 'images/guara.jpg',
+        'حملات': 'images/iStock-2209016591-scaled.jpg'
+    };
+    
+         return categoryImages[category] || 'images/default-story.jpg';}
 
-        // الصورة
-        const imgElem = card.querySelector(".story-image img");
-        if(imgElem) imgElem.src = story.image;
 
-        // نص أول فقرة (excerpt)
-        const excerpt = getExcerpt(story.content);
-        card.querySelector(".story-excerpt").textContent = excerpt;
+//*********************************************************************************************************/
 
-        // category ديناميكي
-        const categoryDiv = card.querySelector(".story-category");
-        if(categoryDiv) {
-            categoryDiv.textContent = story.category;
+   const exchangeRates = {
+  ILS: 1,     
+  USD: 3.75,   
+  JOD: 5.3,    
+  AED: 1.02,   
+};
+
+// دالة لتحويل أي عملة إلى شيكل
+function convertToILS(amount, currency) {
+  const rate = exchangeRates[currency];
+  if (!rate) return null; 
+  return amount * rate;  
+}
+//*********************************************************************************************************/
+// منطق جلب القصص وعرضها
+//*********************************************************************************************************/
+async function loadStories() {
+    try {
+        const response = await fetch('/api/stories');
+        
+        if (!response.ok) {
+            // إذا كان الخطأ 404 أو لا توجد قصص
+            if (response.status === 404) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'لا توجد قصص حالياً.');
+            }
+            throw new Error('فشل في جلب القصص');
+        }
+        
+        const stories = await response.json();
+
+        const container = document.getElementById('stories-container');
+        container.innerHTML = '';
+
+        // إذا كانت القصص فارغة
+        if (stories.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); font-size: 1.2rem; padding: 2rem;">لا توجد قصص حالياً.</p>';
+            return;
         }
 
-        // تحديث شريط البيانات الوصفية (story-meta) لضمان ظهور النوع والوقت معاً
-        const readingTime = calculateReadingTime(story.content);
-        const metaContainer = card.querySelector(".story-meta");
-        if(metaContainer) {
-            metaContainer.innerHTML = `
-                <span class="story-type">
-                    <i class="${story.type === 'متبرع' ? 'fas fa-hand-holding-heart' : 'fas fa-user-check'}"></i> 
-                    <span class="type-text">${story.type}</span>
-                </span>
-                <span class="story-time">
-                    <i class="far fa-clock"></i> ${readingTime}
-                </span>
+        stories.forEach(story => {
+            const storyImage = story.image || getCategoryImage(story.category);
+            
+            const cardHTML = `
+                <div class="story-card">
+                    <div class="story-image">
+                        <img src="${storyImage}" alt="قصة نجاح">
+                        <div class="story-category">${story.category}</div>
+                    </div>
+                    <div class="story-content">
+                        <h3>${story.title}</h3>
+                        <div class="story-meta">
+                            <span class="story-type">
+                                <i class="${story.type === 'متبرع' ? 'fas fa-hand-holding-heart' : 'fas fa-user-check'}"></i> 
+                                <span class="type-text">${story.type}</span>
+                            </span>
+                            <span class="story-time">
+                                <i class="far fa-clock"></i> ${story.time || calculateReadingTime(story.content)}
+                            </span>
+                        </div>
+                        <p class="story-excerpt">${getExcerpt(story.content)}</p>
+                        <button class="read-more" data-story="${story._id}">اقرأ القصة كاملة</button>
+                    </div>
+                    
+                </div>
             `;
+            container.insertAdjacentHTML('beforeend', cardHTML);
+        });
+
+        document.querySelectorAll('.read-more').forEach(button => {
+            button.addEventListener('click', function() {
+                const storyId = this.getAttribute('data-story');
+                openStoryModal(storyId);
+            });
+        });
+
+    } catch (error) {
+        console.error('خطأ في جلب القصص:', error);
+        const container = document.getElementById('stories-container');
+        
+        // عرض الرسالة المحددة من الخادم
+        if (error.message.includes('لا توجد قصص حالياً')) {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); font-size: 1.2rem; padding: 2rem;">لا توجد قصص حالياً.</p>';
+        } else {
+            container.innerHTML = '<p style="text-align: center; color: var(--danger-color); font-size: 1.2rem;">حدث خطأ في تحميل القصص. يرجى المحاولة مرة أخرى.</p>';
         }
     }
-});
+}
 
 //*********************************************************************************************************/
-// منطق نافذة القصة الكاملة (openStoryModal)
+// منطق جلب الإحصائيات
 //*********************************************************************************************************/
 
-function openStoryModal(storyId) {
-    const story = stories[storyId];
-    if (!story) return;
-    
-    const modal = document.getElementById('story-modal');
-      if (!modal) return;
-    const modalContent = modal.querySelector('.modal-content');
-    if (!modalContent) return;
-    
-    // إنشاء محتوى النافذة ديناميكياً
-    modalContent.innerHTML = `
-        <div class="modal-header">
-            <img src="${story.image}" alt="${story.title}">
-            <div class="modal-category">${story.category}</div>
-            <button class="close-modal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <h2>${story.title}</h2>
-            <div class="modal-meta">
-                <span class="modal-type">
-                    <i class="${story.type === 'متبرع' ? 'fas fa-hand-holding-heart' : 'fas fa-user-check'}"></i> 
-                    ${story.type}
-                </span>
-                <span><i class="far fa-clock"></i> ${calculateReadingTime(story.content)}</span>
-            </div>
-            <div class="story-full-content">
-                ${story.content}
-            </div>
-        </div>
-    `;
-    
-    // إضافة مستمعي الأحداث
-    const closeBtn = modalContent.querySelector('.close-modal');
-    closeBtn.addEventListener('click', closeStoryModal);
-    
-    // عرض النافذة
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    
-    // إغلاق النافذة عند النقر خارج المحتوى
-    modal.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            closeStoryModal();
+async function loadStats() {
+    try {
+        const response = await fetch('/api/stories/stats');
+        if (!response.ok) throw new Error('فشل في جلب الإحصائيات');
+        const stats = await response.json();
+        
+        document.getElementById('totalStories').textContent = stats.totalStories;
+        document.getElementById('totalViews').textContent = stats.totalViews;
+
+        // جلب القصص لحساب إجمالي التبرعات بالشيكل
+        const storiesResponse = await fetch('/api/stories');
+        if (!storiesResponse.ok) throw new Error('فشل في جلب القصص');
+        const stories = await storiesResponse.json();
+
+        // حساب إجمالي التبرعات بالشيكل
+        let totalDonationsILS = 0;
+        
+        stories.forEach(story => {
+            if (story.donations && story.currency) {
+                const amountInILS = convertToILS(story.donations, story.currency);
+                if (amountInILS !== null) {
+                    totalDonationsILS += amountInILS;
+                }
+            }
+        });
+
+        // عرض إجمالي التبرعات بالشيكل
+        const totalDonationsElement = document.getElementById('totaldonations');
+        
+        if (totalDonationsILS > 0) {
+            totalDonationsElement.textContent = `${Math.round(totalDonationsILS).toLocaleString()} ₪`;
+        } else {
+            totalDonationsElement.textContent = '0 ₪';
         }
-    });
+        
+    } catch (error) {
+        console.error('خطأ في جلب الإحصائيات:', error);
+        document.getElementById('totalStories').textContent = '0';
+        document.getElementById('totalViews').textContent = '0';
+        document.getElementById('totaldonations').textContent = '0 ₪';
+    }
+}
+
+//*********************************************************************************************************/
+// منطق نافذة القصة الكاملة
+//*********************************************************************************************************/
+
+async function openStoryModal(storyId) {
+    try {
+        const response = await fetch(`/api/stories/${storyId}`);
+        if (!response.ok) throw new Error('فشل في جلب القصة');
+        const story = await response.json();
+
+        const modal = document.getElementById('story-modal');
+        const modalContent = modal.querySelector('.modal-content');
+
+        const storyImage = story.image || getCategoryImage(story.category);
+
+        modalContent.innerHTML = `
+            <div class="modal-header">
+                <img src="${storyImage}" alt="${story.title}">
+                <div class="modal-category">${story.category}</div>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2>${story.title}</h2>
+                <div class="modal-meta">
+                    <span class="modal-type">
+                        <i class="${story.type === 'متبرع' ? 'fas fa-hand-holding-heart' : 'fas fa-user-check'}"></i> 
+                        ${story.type}
+                    </span>
+                    <span><i class="far fa-clock"></i> ${story.time || calculateReadingTime(story.content)}</span>
+                </div>
+                <div class="story-full-content">
+                    ${story.content}
+                </div>
+            </div>
+        `;
+
+        const closeBtn = modalContent.querySelector('.close-modal');
+        closeBtn.addEventListener('click', closeStoryModal);
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) closeStoryModal();
+        });
+    } catch (error) {
+        console.error('خطأ في فتح القصة:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'حدث خطأ أثناء تحميل القصة. حاول مرة أخرى.',
+            confirmButtonText: 'حسنا'
+        });
+    }
 }
 
 function closeStoryModal() {
@@ -283,104 +358,301 @@ function closeStoryModal() {
     document.body.style.overflow = 'auto';
 }
 
-// تحديث مستمعي الأحداث للبطاقات
-document.querySelectorAll('.read-more').forEach(button => {
-    button.addEventListener('click', function() {
-        const storyId = this.getAttribute('data-story');
-        openStoryModal(storyId);
+//*********************************************************************************************************/
+// منطق نافذة مشاركة القصة - الإصدار المعدل لفحص التوكن عند النقر
+//*********************************************************************************************************/
+
+document.addEventListener("DOMContentLoaded", function() {
+    loadStories();
+    loadStats();
+
+    const formModal = document.getElementById('storyModal');
+    const shareBtn = document.querySelector('.share-btn');
+    const closeBtnShare = formModal.querySelector('.close-btn');
+    const cancelBtn = formModal.querySelector('#cancelStory');
+    const storyForm = document.getElementById('storyForm');
+
+    // 🔑 وظيفة التحقق من التوكن وعرض التنبيه (New Function)
+    function checkLoginAndOpenModal() {
+        const token = localStorage.getItem('token');
+        
+        // 🔐 التحقق من وجود التوكن
+        if (!token) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'يجب تسجيل الدخول',
+                text: 'يرجى تسجيل الدخول أولاً لمشاركة قصة',
+                confirmButtonText: 'تسجيل الدخول'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'login.html';
+                }
+            });
+            return false; // يمنع فتح النافذة
+        } else {
+            // فتح النافذة
+            formModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            return true; // يسمح بفتح النافذة
+        }
+    }
+
+    // فتح النافذة - تم استبدال الفتح المباشر بوظيفة checkLoginAndOpenModal
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            checkLoginAndOpenModal(); // يتم الفحص عند الضغط على زر المشاركة
+        });
+    }
+
+    // إغلاق النافذة
+    function closeFormModal() {
+        formModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    if (closeBtnShare) closeBtnShare.addEventListener('click', closeFormModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeFormModal);
+
+    // إغلاق بالنقر خارج النافذة
+    window.addEventListener('click', e => {
+        if (e.target === formModal) closeFormModal();
+    });
+
+    // إغلاق بالزر ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && formModal.style.display === 'flex') {
+            closeFormModal();
+        }
+    });
+
+    // إرسال النموذج (تم حذف فحص التوكن من هنا)
+   if (storyForm) {
+    storyForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // 🔐 فحص التوكن
+        const token = localStorage.getItem('token');
+        if (!token) {
+            Swal.fire({
+                icon: 'error',
+                title: 'انتهت الجلسة',
+                text: 'انتهت مدة صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى.',
+                confirmButtonText: 'تسجيل الدخول'
+            }).then(() => {
+                window.location.href = 'login.html';
+            });
+            return;
+        }
+
+        // 🔍 جمع البيانات من النموذج
+        const storyTitleInput = document.getElementById('storyTitle');
+        const storyCategoryInput = document.getElementById('storyCategory');
+        const typeElement = document.querySelector('input[name="storyType"]:checked');
+        const storyContentInput = document.getElementById('storyContent');
+        const donationAmountInput = document.getElementById('donationAmount'); 
+        const donationCurrencyInput = document.getElementById('donationCurrency'); 
+
+        const title = storyTitleInput.value.trim();
+        const category = storyCategoryInput.value;
+        const type = typeElement ? typeElement.value : null;
+        const contentText = storyContentInput.value.trim();
+        
+        // معالجة قيمة التبرع
+        let donationAmount = 0;
+        if (donationAmountInput.value && donationAmountInput.value.trim() !== '') {
+            donationAmount = parseFloat(donationAmountInput.value);
+            if (isNaN(donationAmount) || donationAmount < 0) {
+                donationAmount = 0;
+            }
+        }
+        
+        const donationCurrency = donationCurrencyInput.value || 'ILS';
+
+        // 🔍 تحقق من البيانات
+        const errors = [];
+        
+        if (!title || title.length < 3) {
+            errors.push('العنوان يجب أن يكون 3 أحرف على الأقل');
+        }
+        
+        if (!category) {
+            errors.push('يرجى اختيار تصنيف للقصة');
+        }
+        
+        if (!type) {
+            errors.push('يرجى اختيار نوع القصة (متبرع/محتاج)');
+        }
+        
+        if (!contentText || contentText.length < 10) {
+            errors.push('المحتوى يجب أن يكون 10 أحرف على الأقل');
+        }
+        
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'بيانات ناقصة',
+                html: `<div style="text-align: right; direction: rtl;">
+                    <p>${errors.join('<br>')}</p>
+                </div>`,
+                confirmButtonText: 'حسنا'
+            });
+            return;
+        }
+
+        // 🔍 تحويل المحتوى إلى HTML
+        const contentHTML = `<p>${contentText.split('\n').join('</p><p>')}</p>`;
+        
+        // 🔍 الحصول على بيانات المستخدم
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ في بيانات المستخدم',
+                text: 'لم يتم العثور على بيانات المستخدم، يرجى تسجيل الدخول مرة أخرى',
+                confirmButtonText: 'تسجيل الدخول'
+            }).then(() => {
+                window.location.href = 'login.html';
+            });
+            return;
+        }
+let authorName = '';
+if (user) {
+    authorName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    if (!authorName || authorName.trim() === '') {
+        authorName = user.email || 'مجهول';
+    }
+}
+        // 🔍 إعداد البيانات للإرسال
+        const storyData = {
+            title: title,
+            category: category,
+            type: type,
+            content: contentHTML,
+            donations: donationAmount,
+            currency: donationCurrency,
+            authorName: authorName,
+            authorId: user._id || user.id,
+            author: user._id || user.id // إرسالها مرتين للتوافق
+        };
+        
+        // 🔍 إضافة email إذا كان مطلوباً
+        if (user.email) {
+            storyData.authorEmail = user.email;
+        }
+
+        console.log('📤 بيانات الإرسال النهائية:', storyData);
+
+        try {
+            // 📤 الإرسال إلى الخادم
+            const response = await fetch('/api/stories', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(storyData)
+            });
+
+            // 📥 معالجة الاستجابة
+            const responseText = await response.text();
+            console.log('📥 استجابة الخادم:', responseText);
+            
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch {
+                result = { raw: responseText };
+            }
+
+            if (!response.ok) {
+                let errorMessage = `خطأ ${response.status}: `;
+                
+                if (result.message) {
+                    errorMessage += result.message;
+                } else if (result.raw) {
+                    errorMessage += result.raw;
+                } else if (result.errors) {
+                    const errors = Object.values(result.errors).map(err => err.message || err);
+                    errorMessage += errors.join(', ');
+                } else if (result._message) {
+                    errorMessage += result._message;
+                } else {
+                    errorMessage += 'حدث خطأ غير معروف';
+                }
+                
+                throw new Error(errorMessage);
+            }
+
+            // ✅ النجاح
+            console.log('✅ تم بنجاح:', result);
+            
+            // إغلاق النافذة وإعادة التعيين
+            closeFormModal();
+            storyForm.reset();
+            
+            // عرض رسالة النجاح
+            Swal.fire({
+                icon: 'success',
+                title: 'تم بنجاح!',
+                html: `<div style="text-align: center; direction: rtl;">
+                    <h3>شكراً لمشاركتك!</h3>
+                    <p>تم نشر قصتك بنجاح</p>
+                    <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                        يمكنك رؤية قصتك في صفحة القصص
+                    </p>
+                </div>`,
+                confirmButtonText: 'حسناً',
+                timer: 3000,
+                showConfirmButton: true
+            });
+            
+            // تحديث القصص والإحصائيات
+            setTimeout(() => {
+                loadStories();
+                loadStats();
+            }, 1500);
+            
+        } catch (error) {
+            console.error('❌ تفاصيل الخطأ:', error);
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'فشل في الإرسال',
+                html: `<div style="text-align: right; direction: rtl;">
+                    <h4>${error.message}</h4>
+                    <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                        تأكد من:<br>
+                        1. اتصال الإنترنت<br>
+                        2. صحة البيانات المدخلة<br>
+                        3. أنك مسجل الدخول
+                    </p>
+                </div>`,
+                confirmButtonText: 'حسناً'
+            });
+        }
+    });
+}
+
+    // تطبيق autoDirection على المدخلات
+    const storyTitleInput = document.getElementById('storyTitle');
+    const storyContentInput = document.getElementById('storyContent');
+    
+    // يجب التأكد من تعريف الدالة autoDirection في مكان ما
+    if (storyTitleInput) autoDirection(storyTitleInput);
+    if (storyContentInput) autoDirection(storyContentInput);
+
+    // تحديث مستمعي الأحداث للبطاقات
+    document.querySelectorAll('.read-more').forEach(button => {
+        button.addEventListener('click', function() {
+            const storyId = this.getAttribute('data-story');
+            openStoryModal(storyId);
+        });
     });
 });
 
 // إضافة مستمع حدث لإغلاق النافذة بالزر ESC
 document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeStoryModal();
-    }
-});
-
-//*********************************************************************************************************/
-// منطق نافذة مشاركة القصة (storyModal) - التعديل الرئيسي لدمج بيانات النموذج
-//*************************************************************************/********************************/
-
-document.addEventListener("DOMContentLoaded", function() {
-    // العناصر الخاصة بنافذة المشاركة
-    const formModal = document.getElementById('storyModal'); 
-    if (formModal) { // تحقق إذا كان المودال موجودًا في الصفحة
-        const shareBtn = document.querySelector('.share-btn');
-        const closeBtnShare = formModal.querySelector('.close-btn'); // تم تغيير الاسم لتجنب التضارب
-        const cancelBtn = document.getElementById('cancelStory');
-        const storyForm = document.getElementById('storyForm'); 
-        const storyTitleInput = document.getElementById('storyTitle');
-        const storyCategoryInput = document.getElementById('storyCategory');
-        const storyContentInput = document.getElementById('storyContent');
-
-        // 1. فتح المودال عند الضغط على زر المشاركة
-        if (shareBtn) {
-            shareBtn.addEventListener('click', () => {
-                formModal.style.display = 'flex';
-            });
-        }
-
-        // 2. إغلاق المودال
-        if (closeBtnShare) closeBtnShare.addEventListener('click', () => formModal.style.display = 'none');
-        if (cancelBtn) cancelBtn.addEventListener('click', () => formModal.style.display = 'none');
-
-        // 3. التعامل مع إرسال النموذج الجديد
-        if (storyForm) {
-            storyForm.addEventListener('submit', function(e) {
-                e.preventDefault(); // منع الإرسال الافتراضي للصفحة
-
-                // جمع البيانات المدخلة من المستخدم
-                const title = storyTitleInput.value.trim();
-                const category = storyCategoryInput.value;
-                const typeElement = document.querySelector('input[name="storyType"]:checked');
-                const type = typeElement ? typeElement.value : null;
-                const contentText = storyContentInput.value.trim();
-
-                // التحقق من ملء جميع الحقول
-                if (!title || !category || !type || !contentText) {
-                    alert("يرجى ملء جميع الحقول المطلوبة (العنوان، الفئة، النوع، والقصة).");
-                    return;
-                }
-
-                // تحويل محتوى النص إلى صيغة HTML
-                const contentHTML = `<p>${contentText.split('\n').join('</p><p>')}</p>`; 
-
-                // إنشاء كائن القصة الجديد
-                const newStoryData = {
-                    title: title,
-                    category: category,
-                    type: type,
-                    time: calculateReadingTime(contentHTML),
-                    image: "images/default-new-story.jpg",
-                    content: contentHTML
-                };
-
-                console.log("تم جمع بيانات القصة الجديدة بنجاح:", newStoryData);
-
-                // إغلاق المودال ومسح النموذج
-                formModal.style.display = 'none';
-                storyForm.reset();
-
-                // تنبيه المستخدم
-                Swal.fire({
-                    icon: 'success',
-                    title: 'شكراً لمشاركتك!',
-                    text: 'تم إرسال قصتك بنجاح، سيتم مراجعتها ونشرها قريباً.',
-                    confirmButtonText: 'حسنا ✅'
-                });
-            });
-        }
-
-        // 4. إغلاق المودال عند الضغط خارج المحتوى
-        window.addEventListener('click', e => {
-            if(e.target === formModal) formModal.style.display = 'none';
-        });
-
-        // 5. تطبيق التوجيه التلقائي على الحقول الجديدة
-        autoDirection(storyTitleInput);
-        autoDirection(storyContentInput);
-    }
+    if (event.key === 'Escape') closeStoryModal();
 });
 
 // دالة لجلب قيمة id من الرابط
@@ -389,15 +661,11 @@ function getStoryIdFromURL() {
     return params.get('id');
 }
 
-// عرض القصة مباشرة إذا كان هناك id
 function displayStoryFromURL() {
     const storyId = getStoryIdFromURL();
-    if (storyId && stories[storyId]) {
-        openStoryModal(storyId); // نستخدم نفس الدالة لفتح المودال
-    }
+    if (storyId) openStoryModal(storyId);
 }
 
-// عند تحميل الصفحة
 window.addEventListener('DOMContentLoaded', function() {
     displayStoryFromURL();
 });

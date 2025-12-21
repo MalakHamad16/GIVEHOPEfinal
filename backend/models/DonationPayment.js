@@ -1,3 +1,4 @@
+//backend/models/DonationPayment.js
 const mongoose = require('mongoose');
 
 const donationPaymentSchema = new mongoose.Schema({
