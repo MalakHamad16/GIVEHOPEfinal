@@ -4,3 +4,4 @@ node_modules/
 backend/givehope-1241b-firebase-adminsdk-*.json
 *.json 
 # إذا في ملفات حساسة
+backend/givehope-*.json
