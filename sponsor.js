@@ -38,16 +38,16 @@ function getImagePath(type) {
   return `/public/sponsor/${imageMap[type] || "default.jpg"}`;
 }
 
+// sponsor.js — داخل renderCases()
 function renderCases(filter) {
   const container = document.getElementById("casesContainer");
   container.innerHTML = "";
-
   let filtered =
     filter === "all"
       ? casesData
       : casesData.filter((c) => c.type === filter);
 
-  // الترتيب 
+  // الترتيب
   const urgencyOrder = { critical: 1, high: 2, medium: 3, low: 4 };
   filtered.sort((a, b) => {
     const statusOrder = {
@@ -61,47 +61,55 @@ function renderCases(filter) {
     const ua = urgencyOrder[a.urgencyLevel] || 3;
     const ub = urgencyOrder[b.urgencyLevel] || 3;
     if (ua !== ub) return ua - ub;
-    return (
-      new Date(a.preferredSponsorshipDeadline) -
-      new Date(b.preferredSponsorshipDeadline)
-    );
+    return new Date(b.createdAt) - new Date(a.createdAt);
   });
 
   const currentUser = getCurrentUser();
+  const isAdmin = currentUser?.role === "admin";
 
   filtered.forEach((caseItem) => {
     const isFully = caseItem.status === "fully sponsored";
     const isPartial = caseItem.status === "partially sponsored";
 
-    // زر الاكتراث 
-    let sponsorBtn;
-    if (isFully) {
-      sponsorBtn = `<button class="btn btn-success disabled" disabled>
-    <i class="fas fa-check"></i> تم الكفالة
-  </button>`;
+    let actionButtons;
+
+    if (isAdmin) {
+      // المسؤول: زر تعديل + حذف
+      actionButtons = `
+  <a href="edit-sponsorship.html?id=${caseItem._id}" class="btn-icon btn-edit" title="تعديل">
+    <i class="fas fa-pencil-alt"></i>
+  </a>
+  <button class="btn-icon btn-delete" onclick="deleteSponsorship('${caseItem._id}')" title="حذف">
+    <i class="fas fa-trash-alt"></i>
+  </button>
+`;
+    } else if (isFully) {
+      actionButtons = `<button class="btn btn-success disabled" disabled>
+        <i class="fas fa-check"></i> تم الكفالة
+      </button>`;
     } else if (isPartial) {
       if (
         currentUser &&
         caseItem.sponsorId &&
         currentUser.id === caseItem.sponsorId
       ) {
-        sponsorBtn = `<a href="DonateNow.html?type=sponsor&id=${caseItem._id}" class="btn btn-primary">
-      <i class="fas fa-hand-holding-usd"></i> ادفع الدفعة
-    </a>`;
+        actionButtons = `<a href="DonateNow.html?type=sponsor&id=${caseItem._id}" class="btn btn-primary">
+          <i class="fas fa-hand-holding-usd"></i> ادفع الدفعة
+        </a>`;
       } else {
-        sponsorBtn = `<button class="btn btn-primary disabled" disabled>
-      <i class="fas fa-user-check"></i> مكفولة جزئياً
-    </button>`;
+        actionButtons = `<button class="btn btn-primary disabled" disabled>
+          <i class="fas fa-user-check"></i> مكفولة جزئياً
+        </button>`;
       }
     } else {
       if (currentUser && currentUser.id) {
-        sponsorBtn = `<a href="DonateNow.html?type=sponsor&id=${caseItem._id}" class="btn btn-primary">
-      <i class="fas fa-hands-helping"></i> اكفل الآن
-    </a>`;
+        actionButtons = `<a href="DonateNow.html?type=sponsor&id=${caseItem._id}" class="btn btn-primary">
+          <i class="fas fa-hands-helping"></i> اكفل الآن
+        </a>`;
       } else {
-        sponsorBtn = `<a href="login.html" class="btn btn-login-prompt">
- سجّل دخولك أولًا
-</a>`;
+        actionButtons = `<a href="login.html" class="btn btn-login-prompt">
+          سجّل دخولك أولًا
+        </a>`;
       }
     }
 
@@ -113,13 +121,10 @@ function renderCases(filter) {
         ? `<div class="status-badge partially-sponsored"><span>مكفولة جزئياً</span></div>`
         : "";
 
-    // عرض المبلغ
     const amountTag = `${caseItem.amountPerPeriod} ₪/${caseItem.periodLabel}`;
 
-    //  إنشاء البطاقة مع دعم البحث (data attributes)
     const card = document.createElement("div");
     card.className = "col-12 col-md-6 col-lg-4 sponsor-card-wrapper";
-    //  مهم: إضافة البيانات المطلوبة للبحث (caseId و firstName)
     card.dataset.caseId = caseItem.caseId?.toLowerCase() || "";
     card.dataset.firstName = caseItem.firstName?.toLowerCase() || "";
 
@@ -142,7 +147,7 @@ function renderCases(filter) {
             <a href="kafala-details.html?id=${caseItem._id}" class="btn btn-outline-primary">
               عرض التفاصيل
             </a>
-            ${sponsorBtn}
+            ${actionButtons}
             <button class="btn-share" onclick="shareSponsorship('${caseItem._id}')">
               <i class="fas fa-share-alt"></i>
             </button>
@@ -153,7 +158,6 @@ function renderCases(filter) {
     container.appendChild(card);
   });
 }
-
 function shareSponsorship(id) {
   const caseItem = casesData.find((s) => s._id === id);
   if (!caseItem) return alert("الكفالة غير موجودة.");
@@ -362,3 +366,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+
+// sponsor.js — دالة حذف الكفالة (للإداري)
+async function deleteSponsorship(id) {
+  if (!confirm("⚠️ هل أنت متأكد من حذف هذه الكفالة؟")) return;
+  try {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const res = await fetch(`/api/sponsorships/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      alert("✅ تم الحذف بنجاح");
+      loadCasesFromAPI(); // إعادة التحميل
+    } else {
+      const data = await res.json();
+      alert("❌ " + (data.message || "فشل الحذف"));
+    }
+  } catch (err) {
+    console.error(err);
+    alert("❌ خطأ في الاتصال");
+  }
+}

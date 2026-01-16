@@ -513,3 +513,55 @@ exports.getSponsorshipById = async (req, res) => {
     res.status(500).json({ success: false, message: "حدث خطأ أثناء تحميل التفاصيل" });
   }
 };
+// ───── 6. تعديل كفالة (Admin فقط) ───────────────────────────────────────────
+exports.updateSponsorship = async (req, res) => {
+  console.log("🔄 updateSponsorship called");
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    // ✅ التحقق من وجود الكفالة أولًا
+    const existing = await Sponsorship.findById(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, message: 'الكفالة غير موجودة' });
+    }
+
+    // ✅ التحديث باستخدام نموذج Sponsorship
+    const updatedSponsorship = await Sponsorship.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "تم تحديث الكفالة بنجاح",
+      sponsorship: updatedSponsorship
+    });
+  } catch (error) {
+    console.error("Error in updateSponsorship:", error);
+    res.status(500).json({ success: false, message: "حدث خطأ أثناء التحديث" });
+  }
+};
+// ───── 7. حذف كفالة (Admin فقط) ─────────────────────────────────────────────
+exports.deleteSponsorship = async (req, res) => {
+  console.log("🗑️ deleteSponsorship called");
+  try {
+    const { id } = req.params;
+
+    // ✅ استخدام نموذج Sponsorship
+    const sponsorship = await Sponsorship.findById(id);
+    if (!sponsorship) {
+      return res.status(404).json({ success: false, message: 'الكفالة غير موجودة' });
+    }
+
+    await Sponsorship.findByIdAndDelete(id);
+    res.status(200).json({
+      success: true,
+      message: 'تم حذف الكفالة بنجاح'
+    });
+  } catch (error) {
+    console.error("Error in deleteSponsorship:", error);
+    res.status(500).json({ success: false, message: "حدث خطأ أثناء الحذف" });
+  }
+};

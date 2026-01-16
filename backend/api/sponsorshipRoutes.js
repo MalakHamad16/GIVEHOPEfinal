@@ -1,25 +1,26 @@
-// backend/api/sponsorshipRoutes.js
+//backend/api/sponsorshipRoutes.js
 const express = require("express");
 const { body } = require("express-validator");
 const { protect } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/authMiddleware");
+
 const {
   createSponsorship,
   getAllSponsorships,
   getSponsorshipById,
-  processSponsorshipPayment,   
+  processSponsorshipPayment,
+  updateSponsorship,
+  deleteSponsorship,
 } = require("../controllers/sponsorshipController");
 
 const router = express.Router();
 
-// Validation rules — تقليل الحقول المطلوبة من الآدمن
 const createSponsorshipValidation = [
   body("donationRequestId")
     .notEmpty()
     .withMessage("معرّف الطلب مطلوب")
     .isMongoId()
     .withMessage("معرّف الطلب يجب أن يكون ObjectId صالح"),
-  
   body("shortDescription")
     .trim()
     .notEmpty()
@@ -28,7 +29,7 @@ const createSponsorshipValidation = [
     .withMessage("الوصف لا يمكن أن يتجاوز 500 حرف"),
 ];
 
-// عام: عرض جميع الكفالات
+// GET all sponsorships
 router.get(
   "/",
   (req, res, next) => {
@@ -40,7 +41,7 @@ router.get(
   getAllSponsorships
 );
 
-// عام: عرض كفالة محددة
+// GET single sponsorship by ID
 router.get(
   "/:id",
   (req, res, next) => {
@@ -52,7 +53,7 @@ router.get(
   getSponsorshipById
 );
 
-// Admin فقط: إنشاء كفالة
+// POST (create new sponsorship)
 router.post(
   "/",
   protect,
@@ -61,7 +62,13 @@ router.post(
   createSponsorship
 );
 
-// ✅ جديد: الكفيل (مستخدم مسجّل) فقط: تسجيل دفعة للكفالة
+// PUT (update sponsorship) — admin only
+router.put('/:id', protect, authorize('admin'), updateSponsorship);
+
+// DELETE (delete sponsorship) — admin only
+router.delete('/:id', protect, authorize('admin'), deleteSponsorship);
+
+// POST payment processing
 router.post(
   "/payment",
   protect,

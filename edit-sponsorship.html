@@ -1,0 +1,133 @@
+<!-- edit-sponsorship.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تعديل الكفالة - GiveHope</title>
+  <!-- خط Cairo للعربية -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- أيقونات Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Bootstrap للتصميم -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- أنماط مخصصة -->
+  <link rel="stylesheet" href="create-campaign.css" />
+  <link rel="stylesheet" href="sponsor.css" />
+  <link rel="stylesheet" href="casedetails.css" /> 
+</head>
+<body>
+  <!-- سيتم تحميل شريط التنقل من navbar.html ديناميكيًا -->
+  <div id="navbar-placeholder"></div>
+
+  <section class="page-header">
+    <h1>تعديل الكفالة</h1>
+    <p>﴿ إِنَّ اللَّهَ يُحِبُّ الْمُحْسِنِينَ ﴾</p>
+  </section>
+
+  <main>
+    <div class="form-box">
+      <h1>عدّل تفاصيل الكفالة</h1>
+      <form id="editForm">
+
+        <!-- رقم الحالة: لا يمكن تعديله، للعرض فقط -->
+        <div class="form-group">
+          <label for="caseId">رقم الحالة</label>
+          <input type="text" id="caseId" readonly />
+        </div>
+
+        <!-- الوصف المختصر: نص حتى 500 حرف -->
+        <div class="form-group">
+          <label for="shortDescription">الوصف المختصر</label>
+          <textarea id="shortDescription" maxlength="500" required></textarea>
+          <small class="form-text text-muted">حتى 500 حرف</small>
+        </div>
+
+        <!-- نوع الكفالة: قائمة منسدلة قابلة للتعديل (للمسؤول فقط) -->
+        <div class="form-group">
+          <label for="type">نوع الكفالة</label>
+          <select id="type" required>
+            <option value="orphans">أيتام وأطفال</option>
+            <option value="educational">تعليمية</option>
+            <option value="health">صحية</option>
+            <option value="living">معيشية</option>
+            <option value="general">شاملة</option>
+          </select>
+        </div>
+
+        <!-- المبلغ لكل فترة: رقم موجب -->
+        <div class="form-group">
+          <label for="amountPerPeriod">المبلغ لكل فترة (₪)</label>
+          <input type="number" id="amountPerPeriod" min="1" required />
+        </div>
+
+        <!-- وصف الفترة: الآن قائمة منسدلة  -->
+        <div class="form-group">
+          <label for="periodType">وصف الفترة</label>
+          <select id="periodType" required>
+            <option value="monthly">شهريًا</option>
+            <option value="quarterly">فصليًا</option>
+            <option value="yearly">سنويًا</option>
+          </select>
+        </div>
+
+        <!-- مدة الكفالة (عدد الفترات): يُدخله المسؤول كرقم -->
+        <div class="form-group">
+          <label for="totalPeriods">مدة الكفالة (عدد الفترات)</label>
+          <input type="number" id="totalPeriods" min="1" required />
+        </div>
+
+        <!-- وصف المدة: يُحسب تلقائيًا ولا يمكن تعديله -->
+        <div class="form-group">
+          <label for="durationLabel">وصف المدة</label>
+          <input type="text" id="durationLabel" readonly placeholder="سيتم تحديده تلقائيًا" />
+        </div>
+
+        <!-- درجة الإلحاح: قائمة منسدلة -->
+        <div class="form-group">
+          <label for="urgencyLevel">درجة الإلحاح</label>
+          <select id="urgencyLevel" required>
+            <option value="low">عادي</option>
+            <option value="medium">مهم</option>
+            <option value="high">عاجل</option>
+            <option value="critical">طارئ</option>
+          </select>
+        </div>
+
+        <!-- أزرار الحفظ والإلغاء -->
+        <div class="form-actions">
+          <button type="button" id="cancelBtn" class="btn btn-cancel">
+            <i class="fas fa-times"></i> إلغاء
+          </button>
+          <button type="submit" class="btn btn-save">
+            <i class="fas fa-save"></i> حفظ التعديل
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- رسالة النجاح التي تظهر بعد الحفظ -->
+    <div class="success-message" id="successMsg">تم حفظ التعديلات بنجاح!</div>
+  </main>
+
+  <!-- تحميل التذييل من footer.html -->
+  <div id="footer-placeholder"></div>
+
+  <!-- تحميل-navbar و-footer ديناميكيًا -->
+  <script>
+    function loadHTML(id, file) {
+      fetch(file)
+        .then(res => res.text())
+        .then(html => document.getElementById(id).innerHTML = html)
+        .catch(err => console.error("خطأ في تحميل", file, err));
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      loadHTML("navbar-placeholder", "navbar.html");
+      loadHTML("footer-placeholder", "footer.html");
+    });
+  </script>
+
+  <!-- ربط ملف المنطق -->
+  <script src="edit-sponsorship.js"></script>
+</body>
+</html>
